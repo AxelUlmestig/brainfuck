@@ -81,7 +81,7 @@ deNest _ Finished                                           = Error "Parse error
 --IO helper functions
 
 run :: String -> ExecutionState
-run instructions = parse $ Running initMemory (Scope instructions)
+run = parse . Running initMemory . Scope
 
 continue :: ExecutionState -> ExecutionState
 continue (ProducedOutput memory scope _)    = parse $ Running memory scope
