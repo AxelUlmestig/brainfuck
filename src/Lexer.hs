@@ -1,20 +1,12 @@
 
-module Lexer (Brainfuck(..), pBrainfuck) where
+module Lexer (pBrainfuck) where
 
 import Data.Maybe (catMaybes)
 import Text.ParserCombinators.Parsec
 
-data Brainfuck
-    = IncrementPointer
-    | DecrementPointer
-    | IncrementValue
-    | DecrementValue
-    | OutputValue
-    | ReadValue
-    | Loop [Brainfuck]
-    deriving (Show)
+import Brainfuck (Operation(..), Brainfuck)
 
-pBrainfuck :: Parser [Brainfuck]
+pBrainfuck :: Parser Brainfuck
 pBrainfuck = catMaybes <$> (many $ choice [
         pIncrementPointer,
         pDecrementPointer,
@@ -26,30 +18,30 @@ pBrainfuck = catMaybes <$> (many $ choice [
         pIgnored
     ])
 
-pIncrementPointer :: Parser (Maybe Brainfuck)
+pIncrementPointer :: Parser (Maybe Operation)
 pIncrementPointer = parseChar '>' IncrementPointer
 
-pDecrementPointer :: Parser (Maybe Brainfuck)
+pDecrementPointer :: Parser (Maybe Operation)
 pDecrementPointer = parseChar '<' DecrementPointer
 
-pIncrementValue :: Parser (Maybe Brainfuck)
+pIncrementValue :: Parser (Maybe Operation)
 pIncrementValue = parseChar '+' IncrementValue
 
-pDecrementValue :: Parser (Maybe Brainfuck)
+pDecrementValue :: Parser (Maybe Operation)
 pDecrementValue = parseChar '-' DecrementValue
 
-pOutputValue :: Parser (Maybe Brainfuck)
+pOutputValue :: Parser (Maybe Operation)
 pOutputValue = parseChar '.' OutputValue
 
-pReadValue :: Parser (Maybe Brainfuck)
+pReadValue :: Parser (Maybe Operation)
 pReadValue = parseChar ',' ReadValue
 
-pLoop :: Parser (Maybe Brainfuck)
+pLoop :: Parser (Maybe Operation)
 pLoop = Just . Loop <$> between (char '[') (char ']') pBrainfuck
 
-pIgnored :: Parser (Maybe Brainfuck)
+pIgnored :: Parser (Maybe Operation)
 pIgnored = many1 (noneOf "><+-.,[]") *> pure Nothing
 
-parseChar :: Char -> Brainfuck -> Parser (Maybe Brainfuck)
+parseChar :: Char -> Operation -> Parser (Maybe Operation)
 parseChar ch bf = const (Just bf) <$> char ch
 

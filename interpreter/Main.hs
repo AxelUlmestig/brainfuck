@@ -7,8 +7,8 @@ import Data.Word8
 import Unsafe.Coerce
 import Text.ParserCombinators.Parsec (parse)
 
-import Brainfuck
-import Lexer (pBrainfuck)
+import Interpreter  (ExecutionState(..), init, interpret, supplyInput)
+import Lexer        (pBrainfuck)
 
 main :: IO ()
 main = do

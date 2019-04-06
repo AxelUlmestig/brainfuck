@@ -17,6 +17,7 @@ library
   hs-source-dirs:      src
   exposed-modules:     Brainfuck
                      , Lexer
+                     , Interpreter
   build-depends:       base >= 4.7 && < 5
                      , word8
                      , parsec >= 3.1
