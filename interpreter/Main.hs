@@ -7,19 +7,22 @@ import Data.Word8
 import Unsafe.Coerce
 import Text.ParserCombinators.Parsec (parse)
 
-import Interpreter  (ExecutionState(..), init, interpret, supplyInput)
-import Lexer        (pBrainfuck)
+import Compiler.X86_64  (compile)
+import Interpreter      (ExecutionState(..), init, interpret, supplyInput)
+import Lexer            (pBrainfuck)
 
 main :: IO ()
 main = do
     args <- getArgs
     case args of
-        [filePath] -> do
+        [cmd, filePath] -> do
             instructions <- readFile filePath
             case (parse pBrainfuck filePath instructions) of
                 Left err    -> putStrLn (show err)
-                Right ops   -> interact $ init ops
-        _ -> putStrLn "provide a brainfuck file to interpret"
+                Right ops   -> case cmd of
+                    "run"       -> interact $ init ops
+                    "compile"   -> compile "tempname" ops
+        _ -> putStrLn "usage:\n$ brainfuck run [file]"
 
 interact :: ExecutionState -> IO ()
 interact (ProducedOutput state ops output)  = do

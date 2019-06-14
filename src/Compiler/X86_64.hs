@@ -5,30 +5,7 @@ import Control.Monad.State  (runState, state, State(..))
 import System.Process       (callCommand)
 import Text.Printf          (printf)
 
---import Brainfuck        (Operation(..), Brainfuck)
-
---TODO import this from other file instead
-data Operation
-    = IncrementPointer
-    | DecrementPointer
-    | IncrementValue
-    | DecrementValue
-    | OutputValue
-    | ReadValue
-    | Loop [Operation]
-    deriving (Show)
-
-type Brainfuck = [Operation]
-
---data Instruction
---    = IncrementPointer
---    | DecrementPointer
---    | IncrementValue
---    | DecrementValue
---    | OutputValue
---    | ReadValue
---    | BeginLoop Int
---    | EndLoop Int
+import Brainfuck        (Operation(..), Brainfuck)
 
 compile :: String -> Brainfuck -> IO ()
 compile name bf = do
@@ -51,42 +28,20 @@ encodeOperation DecrementPointer    = return "decq %r14"
 encodeOperation IncrementValue      = return "incb (%r15, %r14, 1)"
 encodeOperation DecrementValue      = return "decb (%r15, %r14, 1)"
 encodeOperation OutputValue         = return "call _printChar"
-encodeOperation ReadValue           = undefined --TODO implement
+encodeOperation ReadValue           = return "" --TODO implement
 encodeOperation (Loop bf)           = state $ \lc ->
     let
-        loopStart       = printf "l" ++ show lc ++ "_start:\ncmpb $0, (%r15, %r14, 1)\nje l" ++ show lc ++ "_end\n\n"
-        loopEnd         = printf "jmp l" ++ show lc ++ "_start\nl" ++ show lc ++ "_end:\n"
+        loopStart       = "l" ++ show lc ++ "_start:\ncmpb $0, (%r15, %r14, 1)\nje l" ++ show lc ++ "_end\n\n"
+        loopEnd         = "jmp l" ++ show lc ++ "_start\nl" ++ show lc ++ "_end:\n"
         (loopBody, lc') = runState (encodeOperations bf) (lc + 1)
     in
         (loopStart ++ loopBody ++ loopEnd, lc')
 
 assemble :: String -> String -> IO ()
 assemble programName assemblyCode = do
-    callCommand $ "echo '" ++ assemblyCode ++ "' > hello.s" --TODO remove
-    callCommand $ "echo '" ++ assemblyCode ++ "' | as -o " ++ programName ++ ".o"
-    callCommand $ "ld " ++ programName ++ ".o -o " ++ programName
-
--- TODO call from Main file
-main :: IO ()
-main = do
-    assemble "hello" (encode [IncrementValue, Loop [DecrementValue], Loop [Loop [DecrementValue]]])
-
-hello = unlines
-    [".section .data",
-    ".section .text",
-    "message:",
-    ".ascii \"Hello world\\\\n\"",
-    ".equ message_length, 12",
-    ".globl _start",
-    "_start:",
-    "movq $1, %rdi       # stdout file descriptor",
-    "movq $message, %rsi # message to print",
-    "movq $message_length, %rdx      # message length",
-    "movq $1, %rax       # sys_write",
-    "syscall",
-    "movq $0, %rdi       # exit code = 0",
-    "movq $60, %rax      # sys_exit",
-    "syscall"]
+    callCommand $ printf "echo '%s' > '%s'.s" assemblyCode programName
+    callCommand $ printf "echo '%s' | as -o %s.o" assemblyCode programName
+    callCommand $ printf "ld %s.o -o %s" programName programName
 
 header = "\n\
     \.section .bss\n\
