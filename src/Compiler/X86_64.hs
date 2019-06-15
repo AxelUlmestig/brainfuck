@@ -28,7 +28,7 @@ encodeOperation DecrementPointer    = return "decq %r14"
 encodeOperation IncrementValue      = return "incb (%r15, %r14, 1)"
 encodeOperation DecrementValue      = return "decb (%r15, %r14, 1)"
 encodeOperation OutputValue         = return "call _printChar"
-encodeOperation ReadValue           = return "" --TODO implement
+encodeOperation ReadValue           = return "call _readChar"
 encodeOperation (Loop bf)           = state $ \lc ->
     let
         loopStart       = "l" ++ show lc ++ "_start:\ncmpb $0, (%r15, %r14, 1)\nje l" ++ show lc ++ "_end\n\n"
@@ -56,6 +56,15 @@ header = "\n\
     \addq %r14, %rsi     # TODO can this be done in one step?\n\
     \movq $1, %rdx       # message length\n\
     \movq $1, %rax       # sys_write\n\
+    \syscall\n\
+    \ret\n\
+    \\\n\
+    \_readChar:\n\
+    \movq $0, %rdi       # stdin file descriptor\n\
+    \movq $memory, %rsi  # message to print\n\
+    \addq %r14, %rsi     # TODO can this be done in one step?\n\
+    \movq $1, %rdx       # message length\n\
+    \movq $0, %rax       # sys_read\n\
     \syscall\n\
     \ret\n\
     \\\n\
