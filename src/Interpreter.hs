@@ -31,8 +31,8 @@ interpret state (IncrementValue:ops)            = interpret (incrementValue stat
 interpret state (DecrementValue:ops)            = interpret (decrementValue state) ops
 interpret state (OutputValue:ops)               = ProducedOutput state ops (getValue state)
 interpret state (ReadValue:ops)                 = WaitingForInput state ops
-interpret state@(State _ 0 _) ((Loop _):ops)    = interpret state ops
-interpret state ops@((Loop ops'):_)     =
+interpret state@(State _ 0 _) ((Loop _ _):ops)    = interpret state ops
+interpret state ops@((Loop _ ops'):_)     =
     case (interpret state ops') of
         Finished state'                     -> interpret state' ops
         WaitingForInput state' ops''        -> WaitingForInput state' (ops'' ++ ops)

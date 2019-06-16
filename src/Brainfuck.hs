@@ -1,6 +1,8 @@
 
 module Brainfuck (Operation(..), Brainfuck) where
 
+type LoopId = Int
+
 data Operation
     = IncrementPointer
     | DecrementPointer
@@ -8,7 +10,7 @@ data Operation
     | DecrementValue
     | OutputValue
     | ReadValue
-    | Loop [Operation]
+    | Loop LoopId [Operation]
     deriving (Show)
 
 type Brainfuck = [Operation]

@@ -5,7 +5,7 @@ import System.Environment
 import Data.Char (ord)
 import Data.Word8
 import Unsafe.Coerce
-import Text.ParserCombinators.Parsec (parse)
+import Text.Parsec (runP)
 
 import Compiler.X86_64  (compile)
 import Interpreter      (ExecutionState(..), init, interpret, supplyInput)
@@ -17,7 +17,7 @@ main = do
     case args of
         [cmd, filePath] -> do
             instructions <- readFile filePath
-            case (parse pBrainfuck filePath instructions) of
+            case (runP pBrainfuck 0 filePath instructions) of
                 Left err    -> putStrLn (show err)
                 Right ops   -> case cmd of
                     "run"       -> interact $ init ops

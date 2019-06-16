@@ -1,9 +1,8 @@
 
 module Compiler.X86_64 (compile) where
 
-import Control.Monad.State  (runState, state, State(..))
-import System.Process       (callCommand)
-import Text.Printf          (printf)
+import System.Process   (callCommand)
+import Text.Printf      (printf)
 
 import Brainfuck        (Operation(..), Brainfuck)
 
@@ -15,28 +14,24 @@ compile name bf = do
 encode :: Brainfuck -> String
 encode bf =
     let
-        (asm, _)    = runState (encodeOperations bf) 0
+        asm = unlines $ map encodeOperation bf
     in
         header ++ asm ++ footer
 
-encodeOperations :: Brainfuck -> State Int String
-encodeOperations = fmap unlines . traverse encodeOperation
-
-encodeOperation :: Operation -> State Int String
-encodeOperation IncrementPointer    = return "incq %r14"
-encodeOperation DecrementPointer    = return "decq %r14"
-encodeOperation IncrementValue      = return "incb (%r15, %r14, 1)"
-encodeOperation DecrementValue      = return "decb (%r15, %r14, 1)"
-encodeOperation OutputValue         = return "call _printChar"
-encodeOperation ReadValue           = return "call _readChar"
-encodeOperation (Loop bf)           = state $ \lc ->
+encodeOperation :: Operation -> String
+encodeOperation IncrementPointer    = "incq %r14"
+encodeOperation DecrementPointer    = "decq %r14"
+encodeOperation IncrementValue      = "incb (%r15, %r14, 1)"
+encodeOperation DecrementValue      = "decb (%r15, %r14, 1)"
+encodeOperation OutputValue         = "call _printChar"
+encodeOperation ReadValue           = "call _readChar"
+encodeOperation (Loop id bf)        =
     let
-        loopStart       = "l" ++ show lc ++ "_start:\ncmpb $0, (%r15, %r14, 1)\nje l" ++ show lc ++ "_end\n\n"
-        loopEnd         = "jmp l" ++ show lc ++ "_start\nl" ++ show lc ++ "_end:\n"
-        (loopBody, lc') = runState (encodeOperations bf) (lc + 1)
+        loopStart       = "l" ++ show id ++ "_start:\ncmpb $0, (%r15, %r14, 1)\nje l" ++ show id ++ "_end\n\n"
+        loopEnd         = "jmp l" ++ show id ++ "_start\nl" ++ show id ++ "_end:\n"
+        loopBody        = unlines $ map encodeOperation bf
     in
-        (loopStart ++ loopBody ++ loopEnd, lc')
-
+        loopStart ++ loopBody ++ loopEnd
 assemble :: String -> String -> IO ()
 assemble programName assemblyCode = do
     callCommand $ printf "echo '%s' > '%s'.s" assemblyCode programName

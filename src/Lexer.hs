@@ -1,12 +1,13 @@
 
 module Lexer (pBrainfuck) where
 
-import Data.Maybe (catMaybes)
+import Data.Maybe   (catMaybes)
+import Text.Parsec  (getState, modifyState, Parsec)
 import Text.ParserCombinators.Parsec
 
-import Brainfuck (Operation(..), Brainfuck)
+import Brainfuck    (Operation(..), Brainfuck)
 
-pBrainfuck :: Parser Brainfuck
+pBrainfuck :: Parsec String Int Brainfuck
 pBrainfuck = catMaybes <$> (many $ choice [
         pIncrementPointer,
         pDecrementPointer,
@@ -18,30 +19,34 @@ pBrainfuck = catMaybes <$> (many $ choice [
         pIgnored
     ])
 
-pIncrementPointer :: Parser (Maybe Operation)
+pIncrementPointer :: Parsec String Int (Maybe Operation)
 pIncrementPointer = parseChar '>' IncrementPointer
 
-pDecrementPointer :: Parser (Maybe Operation)
+pDecrementPointer :: Parsec String Int (Maybe Operation)
 pDecrementPointer = parseChar '<' DecrementPointer
 
-pIncrementValue :: Parser (Maybe Operation)
+pIncrementValue :: Parsec String Int (Maybe Operation)
 pIncrementValue = parseChar '+' IncrementValue
 
-pDecrementValue :: Parser (Maybe Operation)
+pDecrementValue :: Parsec String Int (Maybe Operation)
 pDecrementValue = parseChar '-' DecrementValue
 
-pOutputValue :: Parser (Maybe Operation)
+pOutputValue :: Parsec String Int (Maybe Operation)
 pOutputValue = parseChar '.' OutputValue
 
-pReadValue :: Parser (Maybe Operation)
+pReadValue :: Parsec String Int (Maybe Operation)
 pReadValue = parseChar ',' ReadValue
 
-pLoop :: Parser (Maybe Operation)
-pLoop = Just . Loop <$> between (char '[') (char ']') pBrainfuck
+pLoop :: Parsec String Int (Maybe Operation)
+pLoop = do
+    loop        <- between (char '[') (char ']') pBrainfuck
+    loopCount   <- getState
+    modifyState (+1)
+    return $ Just (Loop loopCount loop)
 
-pIgnored :: Parser (Maybe Operation)
+pIgnored :: Parsec String Int (Maybe Operation)
 pIgnored = many1 (noneOf "><+-.,[]") *> pure Nothing
 
-parseChar :: Char -> Operation -> Parser (Maybe Operation)
+parseChar :: Char -> Operation -> Parsec String Int (Maybe Operation)
 parseChar ch bf = const (Just bf) <$> char ch
 
