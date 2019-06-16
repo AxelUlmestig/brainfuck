@@ -27,11 +27,12 @@ encodeOperation OutputValue         = "call _printChar"
 encodeOperation ReadValue           = "call _readChar"
 encodeOperation (Loop id bf)        =
     let
-        loopStart       = "l" ++ show id ++ "_start:\ncmpb $0, (%r15, %r14, 1)\nje l" ++ show id ++ "_end\n\n"
-        loopEnd         = "jmp l" ++ show id ++ "_start\nl" ++ show id ++ "_end:\n"
+        loopStart       = printf "l%d_start:\ncmpb $0, (%%r15, %%r14, 1)\nje l%d_end\n\n" id id
+        loopEnd         = printf "jmp l%d_start\nl%d_end:\n" id id
         loopBody        = unlines $ map encodeOperation bf
     in
         loopStart ++ loopBody ++ loopEnd
+
 assemble :: String -> String -> IO ()
 assemble programName assemblyCode = do
     callCommand $ printf "echo '%s' > '%s'.s" assemblyCode programName
