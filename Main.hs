@@ -1,15 +1,17 @@
 module Main where
 
-import Prelude hiding (init, interact)
+import Prelude hiding       (interact, splitAt)
 import System.Environment
-import Data.Char (ord)
+import Data.Char            (ord)
+import Data.List            (intercalate)
 import Data.Word8
 import Unsafe.Coerce
-import Text.Parsec (runP)
+import Text.Parsec          (runP)
 
-import Compiler.X86_64  (compile)
-import Interpreter      (ExecutionState(..), init, interpret, supplyInput)
-import Lexer            (pBrainfuck)
+import Compiler.X86_64      (compile)
+import Interpreter          (ExecutionState(..), interpret, supplyInput)
+import qualified Interpreter
+import Lexer                (pBrainfuck)
 
 main :: IO ()
 main = do
@@ -20,8 +22,8 @@ main = do
             case (runP pBrainfuck 0 filePath instructions) of
                 Left err    -> putStrLn (show err)
                 Right ops   -> case cmd of
-                    "run"       -> interact $ init ops
-                    "compile"   -> compile "tempname" ops
+                    "run"       -> interact $ Interpreter.init ops
+                    "compile"   -> compile (getFileName filePath) ops
         _ -> putStrLn "usage:\n$ brainfuck run [file]"
 
 interact :: ExecutionState -> IO ()
@@ -40,3 +42,24 @@ charToWord8 :: Char -> Word8
 charToWord8 char
     | ord char > 255    = 0
     | otherwise         = unsafeCoerce char
+
+-- TODO use some library for this
+getFileName :: String -> String
+getFileName path =
+    let
+        withEnding  = last $ splitAt '/' path
+        sections    = splitAt '.' withEnding
+    in case sections of
+        [nameWithNoEnding]  -> nameWithNoEnding
+        []                  -> ""
+        _                   -> intercalate "." $ init sections
+
+splitAt :: Eq a => a -> [a] -> [[a]]
+splitAt _ [] = []
+splitAt c xs =
+    let
+        chunk       = takeWhile (/=c) xs
+        remainder   = drop 1 $ dropWhile (/=c) xs
+    in
+        chunk : splitAt c remainder
+
