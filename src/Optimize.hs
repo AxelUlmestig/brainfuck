@@ -6,6 +6,7 @@ import Brainfuck (Operation(..), Brainfuck)
 optimize :: Brainfuck -> Brainfuck
 optimize =
     removeInitialLoops
+    . removeLoopsAfterCellReset
     . optimizeCellResets
     . removeEmptyLoops
     . removeZeroValueInc
@@ -79,4 +80,14 @@ onlyContainsIncValue (ResetCell:bf)             = onlyContainsIncValue bf
 onlyContainsIncValue ((IncrementValue _):bf)    = onlyContainsIncValue bf
 onlyContainsIncValue ((Loop _ bf'):bf)          = onlyContainsIncValue bf' && onlyContainsIncValue bf
 onlyContainsIncValue _                          = False
+
+removeLoopsAfterCellReset :: Brainfuck -> Brainfuck
+removeLoopsAfterCellReset (ResetCell:(Loop _ _):bf) =
+    removeLoopsAfterCellReset (ResetCell:bf)
+removeLoopsAfterCellReset ((Loop id bf'):bf)        =
+    Loop id (removeLoopsAfterCellReset bf') : removeLoopsAfterCellReset bf
+removeLoopsAfterCellReset (op:bf)                   =
+    op : removeLoopsAfterCellReset bf
+removeLoopsAfterCellReset []                        =
+    []
 
