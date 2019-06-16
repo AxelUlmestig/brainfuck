@@ -26,7 +26,7 @@ interpret :: State -> Brainfuck -> ExecutionState
 interpret state []                                  = Finished state
 interpret state ((IncrementPointer n):ops)          = interpret (incrementPointer n state) ops
 interpret state ((IncrementValue n):ops)            = interpret (incrementValue n state) ops
-interpret state (ResetCell:ops)                     = interpret (resetCell state) ops
+interpret state ((SetValue n):ops)                  = interpret (setValue state (fromIntegral n)) ops
 interpret state (OutputValue:ops)                   = ProducedOutput state ops (getValue state)
 interpret state (ReadValue:ops)                     = WaitingForInput state ops
 interpret state@(State _ (0:_)) ((Loop _ _):ops)    = interpret state ops
@@ -46,9 +46,6 @@ init = interpret initState
 
 initState :: State
 initState = State (repeat 0) (repeat 0)
-
-resetCell :: State -> State
-resetCell (State previous (_:subsequent)) = State previous (0:subsequent)
 
 incrementPointer :: Int -> State -> State
 incrementPointer n (State previous current)

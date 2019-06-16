@@ -61,7 +61,7 @@ removeEmptyLoops (op:bf)            = op : removeEmptyLoops bf
 removeEmptyLoops []                 = []
 
 removeInitialLoops :: Brainfuck -> Brainfuck
-removeInitialLoops (ResetCell:bf)   = removeInitialLoops bf
+removeInitialLoops ((SetValue 0):bf)   = removeInitialLoops bf
 removeInitialLoops ((Loop _ _):bf)  = removeInitialLoops bf
 removeInitialLoops bf               = bf
 
@@ -70,23 +70,23 @@ optimizeCellResets = map transformCellReset
 
 transformCellReset :: Operation -> Operation
 transformCellReset (Loop id bf)
-    | onlyContainsIncValue bf   = ResetCell
+    | onlyContainsIncValue bf   = SetValue 0
     | otherwise                 = Loop id (optimizeCellResets bf)
 transformCellReset op = op
 
 onlyContainsIncValue :: Brainfuck -> Bool
 onlyContainsIncValue []                         = True
-onlyContainsIncValue (ResetCell:bf)             = onlyContainsIncValue bf
+onlyContainsIncValue ((SetValue _):bf)          = onlyContainsIncValue bf
 onlyContainsIncValue ((IncrementValue _):bf)    = onlyContainsIncValue bf
 onlyContainsIncValue ((Loop _ bf'):bf)          = onlyContainsIncValue bf' && onlyContainsIncValue bf
 onlyContainsIncValue _                          = False
 
 removeLoopsAfterCellReset :: Brainfuck -> Brainfuck
-removeLoopsAfterCellReset (ResetCell:(Loop _ _):bf) =
-    removeLoopsAfterCellReset (ResetCell:bf)
-removeLoopsAfterCellReset ((Loop id bf'):bf)        =
+removeLoopsAfterCellReset ((SetValue 0):(Loop _ _):bf)  =
+    removeLoopsAfterCellReset ((SetValue 0):bf)
+removeLoopsAfterCellReset ((Loop id bf'):bf)            =
     Loop id (removeLoopsAfterCellReset bf') : removeLoopsAfterCellReset bf
-removeLoopsAfterCellReset (op:bf)                   =
+removeLoopsAfterCellReset (op:bf)                       =
     op : removeLoopsAfterCellReset bf
 removeLoopsAfterCellReset []                        =
     []
