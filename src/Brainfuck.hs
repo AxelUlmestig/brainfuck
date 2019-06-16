@@ -8,6 +8,7 @@ type LoopId = Int
 data Operation
     = IncrementPointer Int
     | IncrementValue Int
+    | ResetCell
     | OutputValue
     | ReadValue
     | Loop LoopId [Operation]

@@ -23,6 +23,7 @@ encodeOperation (IncrementPointer n)    = printf "addq $%d, %%r14" n
 encodeOperation (IncrementValue n)      = printf "addb $%d, (%%r15, %%r14, 1)" n
 encodeOperation OutputValue             = "call _printChar"
 encodeOperation ReadValue               = "call _readChar"
+encodeOperation ResetCell               = "movb $0, (%r15, %r14, 1)"
 encodeOperation (Loop id bf)            =
     let
         loopStart       = printf "l%d_start:\ncmpb $0, (%%r15, %%r14, 1)\nje l%d_end\n\n" id id

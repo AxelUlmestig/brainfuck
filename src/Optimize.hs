@@ -6,15 +6,12 @@ import Brainfuck (Operation(..), Brainfuck)
 optimize :: Brainfuck -> Brainfuck
 optimize =
     removeInitialLoops
+    . optimizeCellResets
     . removeEmptyLoops
     . removeZeroValueInc
     . removeZeroPointerInc
     . squishIncValue
     . squishIncPointer
-
-optimizeRecursive :: Brainfuck -> Brainfuck
-optimizeRecursive ((Loop id []):bf') = optimizeRecursive bf'
-optimizeRecursive ((Loop id bf):bf') = Loop id (optimizeRecursive bf) : optimizeRecursive bf'
 
 squishIncValue :: Brainfuck -> Brainfuck
 squishIncValue ((Loop id bf'):bf)                           =
@@ -63,6 +60,23 @@ removeEmptyLoops (op:bf)            = op : removeEmptyLoops bf
 removeEmptyLoops []                 = []
 
 removeInitialLoops :: Brainfuck -> Brainfuck
-removeInitialLoops ((Loop _ _):bf) = removeInitialLoops bf
+removeInitialLoops (ResetCell:bf)   = removeInitialLoops bf
+removeInitialLoops ((Loop _ _):bf)  = removeInitialLoops bf
 removeInitialLoops bf               = bf
+
+optimizeCellResets :: Brainfuck -> Brainfuck
+optimizeCellResets = map transformCellReset
+
+transformCellReset :: Operation -> Operation
+transformCellReset (Loop id bf)
+    | onlyContainsIncValue bf   = ResetCell
+    | otherwise                 = Loop id (optimizeCellResets bf)
+transformCellReset op = op
+
+onlyContainsIncValue :: Brainfuck -> Bool
+onlyContainsIncValue []                         = True
+onlyContainsIncValue (ResetCell:bf)             = onlyContainsIncValue bf
+onlyContainsIncValue ((IncrementValue _):bf)    = onlyContainsIncValue bf
+onlyContainsIncValue ((Loop _ bf'):bf)          = onlyContainsIncValue bf' && onlyContainsIncValue bf
+onlyContainsIncValue _                          = False
 
