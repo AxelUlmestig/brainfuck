@@ -12,6 +12,7 @@ import Compiler.X86_64      (compile)
 import Interpreter          (ExecutionState(..), interpret, supplyInput)
 import qualified Interpreter
 import Lexer                (pBrainfuck)
+import Optimize             (optimize)
 
 main :: IO ()
 main = do
@@ -22,8 +23,8 @@ main = do
             case (runP pBrainfuck 0 filePath instructions) of
                 Left err    -> putStrLn (show err)
                 Right ops   -> case cmd of
-                    "run"       -> interact $ Interpreter.init ops
-                    "compile"   -> compile (getFileName filePath) ops
+                    "run"       -> interact $ Interpreter.init (optimize ops)
+                    "compile"   -> compile (getFileName filePath) (optimize ops)
         _ -> putStrLn "usage:\n$ brainfuck run [file]"
 
 interact :: ExecutionState -> IO ()
