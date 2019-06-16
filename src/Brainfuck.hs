@@ -1,13 +1,13 @@
 
 module Brainfuck (Operation(..), Brainfuck) where
 
+import Data.Word8
+
 type LoopId = Int
 
 data Operation
-    = IncrementPointer
-    | DecrementPointer
-    | IncrementValue
-    | DecrementValue
+    = IncrementPointer Int
+    | IncrementValue Int
     | OutputValue
     | ReadValue
     | Loop LoopId [Operation]

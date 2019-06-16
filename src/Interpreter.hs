@@ -1,4 +1,3 @@
-
 module Interpreter (
     ExecutionState(..),
     interpret,
@@ -12,7 +11,7 @@ import Prelude hiding (init)
 import Brainfuck (Operation(..), Brainfuck)
 
 data State
-    = State [Word8] Word8 [Word8]
+    = State [Word8] [Word8]
     deriving (Show)
 
 data ExecutionState
@@ -24,14 +23,12 @@ data ExecutionState
 -- Control Flow
 
 interpret :: State -> Brainfuck -> ExecutionState
-interpret state []                              = Finished state
-interpret state (IncrementPointer:ops)          = interpret (incrementPointer state) ops
-interpret state (DecrementPointer:ops)          = interpret (decrementPointer state) ops
-interpret state (IncrementValue:ops)            = interpret (incrementValue state) ops
-interpret state (DecrementValue:ops)            = interpret (decrementValue state) ops
-interpret state (OutputValue:ops)               = ProducedOutput state ops (getValue state)
-interpret state (ReadValue:ops)                 = WaitingForInput state ops
-interpret state@(State _ 0 _) ((Loop _ _):ops)    = interpret state ops
+interpret state []                                  = Finished state
+interpret state ((IncrementPointer n):ops)          = interpret (incrementPointer n state) ops
+interpret state ((IncrementValue n):ops)            = interpret (incrementValue n state) ops
+interpret state (OutputValue:ops)                   = ProducedOutput state ops (getValue state)
+interpret state (ReadValue:ops)                     = WaitingForInput state ops
+interpret state@(State _ (0:_)) ((Loop _ _):ops)    = interpret state ops
 interpret state ops@((Loop _ ops'):_)     =
     case (interpret state ops') of
         Finished state'                     -> interpret state' ops
@@ -47,25 +44,31 @@ init = interpret initState
 -- State Manipulations
 
 initState :: State
-initState = State [] 0 []
+initState = State (repeat 0) (repeat 0)
 
-incrementPointer :: State -> State
-incrementPointer (State previous current [])                  = State (current:previous) 0 []
-incrementPointer (State previous current (next:subsequent))   = State (current:previous) next subsequent
+incrementPointer :: Int -> State -> State
+incrementPointer n (State previous current)
+    | n > 0     =
+        let
+            previous'   = reverse (take n current) ++ previous
+            current'    = drop n current
+        in
+            State previous' current'
 
-decrementPointer :: State -> State
-decrementPointer (State [] current subsequent)                        = State [] 0 (current:subsequent)
-decrementPointer (State (rightBefore:previous) current subsequent)    = State previous rightBefore (current:subsequent)
+    | otherwise =
+        let
+            previous'   = drop (abs n) previous
+            current'    = reverse (take (abs n) previous) ++ current
+        in
+            State previous' current'
 
-incrementValue :: State -> State
-incrementValue (State previous value subsequent) = State previous (value + 1) subsequent
-
-decrementValue :: State -> State
-decrementValue (State previous value subsequent) = State previous (value - 1) subsequent
+incrementValue :: Int -> State -> State
+incrementValue n (State previous (value:subsequent)) =
+    State previous ((value + (fromIntegral n)) : subsequent)
 
 setValue :: State -> Word8 -> State
-setValue (State previous _ subsequent) newValue = State previous newValue subsequent
+setValue (State previous (_:subsequent)) newValue = State previous (newValue : subsequent)
 
 getValue :: State -> Word8
-getValue (State _ value _)  = value
+getValue (State _ (value:_))  = value
 

@@ -19,13 +19,11 @@ encode bf =
         header ++ asm ++ footer
 
 encodeOperation :: Operation -> String
-encodeOperation IncrementPointer    = "incq %r14"
-encodeOperation DecrementPointer    = "decq %r14"
-encodeOperation IncrementValue      = "incb (%r15, %r14, 1)"
-encodeOperation DecrementValue      = "decb (%r15, %r14, 1)"
-encodeOperation OutputValue         = "call _printChar"
-encodeOperation ReadValue           = "call _readChar"
-encodeOperation (Loop id bf)        =
+encodeOperation (IncrementPointer n)    = printf "addq $%d, %%r14" n
+encodeOperation (IncrementValue n)      = printf "addb $%d, (%%r15, %%r14, 1)" n
+encodeOperation OutputValue             = "call _printChar"
+encodeOperation ReadValue               = "call _readChar"
+encodeOperation (Loop id bf)            =
     let
         loopStart       = printf "l%d_start:\ncmpb $0, (%%r15, %%r14, 1)\nje l%d_end\n\n" id id
         loopEnd         = printf "jmp l%d_start\nl%d_end:\n" id id

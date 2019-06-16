@@ -20,16 +20,16 @@ pBrainfuck = catMaybes <$> (many $ choice [
     ])
 
 pIncrementPointer :: Parsec String Int (Maybe Operation)
-pIncrementPointer = parseChar '>' IncrementPointer
+pIncrementPointer = parseChar '>' (IncrementPointer 1)
 
 pDecrementPointer :: Parsec String Int (Maybe Operation)
-pDecrementPointer = parseChar '<' DecrementPointer
+pDecrementPointer = parseChar '<' (IncrementPointer (-1))
 
 pIncrementValue :: Parsec String Int (Maybe Operation)
-pIncrementValue = parseChar '+' IncrementValue
+pIncrementValue = parseChar '+' (IncrementValue 1)
 
 pDecrementValue :: Parsec String Int (Maybe Operation)
-pDecrementValue = parseChar '-' DecrementValue
+pDecrementValue = parseChar '-' (IncrementValue (-1))
 
 pOutputValue :: Parsec String Int (Maybe Operation)
 pOutputValue = parseChar '.' OutputValue
