@@ -6,7 +6,9 @@ import Brainfuck (Operation(..), Brainfuck)
 optimize :: Brainfuck -> Brainfuck
 optimize =
     removeInitialLoops
-    . removeLoopsAfterCellReset
+    . mergeSetAndInc
+    . squishSetValue
+    . pruneDeadLoops
     . optimizeCellResets
     . removeEmptyLoops
     . removeZeroValueInc
@@ -81,13 +83,22 @@ onlyContainsIncValue ((IncrementValue _):bf)    = onlyContainsIncValue bf
 onlyContainsIncValue ((Loop _ bf'):bf)          = onlyContainsIncValue bf' && onlyContainsIncValue bf
 onlyContainsIncValue _                          = False
 
-removeLoopsAfterCellReset :: Brainfuck -> Brainfuck
-removeLoopsAfterCellReset ((SetValue 0):(Loop _ _):bf)  =
-    removeLoopsAfterCellReset ((SetValue 0):bf)
-removeLoopsAfterCellReset ((Loop id bf'):bf)            =
-    Loop id (removeLoopsAfterCellReset bf') : removeLoopsAfterCellReset bf
-removeLoopsAfterCellReset (op:bf)                       =
-    op : removeLoopsAfterCellReset bf
-removeLoopsAfterCellReset []                        =
-    []
+pruneDeadLoops :: Brainfuck -> Brainfuck
+pruneDeadLoops ((SetValue 0):(Loop _ _):bf) = pruneDeadLoops ((SetValue 0):bf)
+pruneDeadLoops ((Loop id bf'):bf)           = Loop id (pruneDeadLoops bf') : pruneDeadLoops bf
+pruneDeadLoops (op:bf)                      = op : pruneDeadLoops bf
+pruneDeadLoops []                           = []
+
+squishSetValue :: Brainfuck -> Brainfuck
+squishSetValue ((Loop id bf'):bf)               = Loop id (squishSetValue bf') : squishSetValue bf
+squishSetValue ((SetValue x1):(SetValue x2):bf) = squishSetValue $ SetValue x2 : bf
+squishSetValue (op:bf)                          = op : squishSetValue bf
+squishSetValue []                               = []
+
+mergeSetAndInc :: Brainfuck -> Brainfuck
+mergeSetAndInc ((Loop id bf'):bf)                   = Loop id (mergeSetAndInc bf') : mergeSetAndInc bf
+mergeSetAndInc ((IncrementValue n):(SetValue x):bf) = mergeSetAndInc $ SetValue x : bf
+mergeSetAndInc ((SetValue x):(IncrementValue n):bf) = mergeSetAndInc $ SetValue (x + n) : bf
+mergeSetAndInc (op:bf)                              = op : mergeSetAndInc bf
+mergeSetAndInc []                                   = []
 
