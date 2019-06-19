@@ -2,10 +2,12 @@
 module Optimize (optimize) where
 
 import Brainfuck (Operation(..), Brainfuck)
+import Optimizations.ForLoops (optimizeForLoops)
 
 optimize :: Brainfuck -> Brainfuck
 optimize =
     removeInitialLoops
+    . optimizeForLoops
     . mergeSetAndInc
     . squishSetValue
     . pruneDeadLoops

@@ -27,6 +27,7 @@ interpret state []                                  = Finished state
 interpret state ((IncrementPointer n):ops)          = interpret (incrementPointer n state) ops
 interpret state ((IncrementValue n):ops)            = interpret (incrementValue n state) ops
 interpret state ((SetValue n):ops)                  = interpret (setValue state (fromIntegral n)) ops
+interpret state ((AddMult addr fctr):ops)           = interpret (addMult addr (fromIntegral fctr) state) ops
 interpret state (OutputValue:ops)                   = ProducedOutput state ops (getValue state)
 interpret state (ReadValue:ops)                     = WaitingForInput state ops
 interpret state@(State _ (0:_)) ((Loop _ _):ops)    = interpret state ops
@@ -66,6 +67,15 @@ incrementPointer n (State previous current)
 incrementValue :: Int -> State -> State
 incrementValue n (State previous (value:subsequent)) =
     State previous ((value + (fromIntegral n)) : subsequent)
+
+addMult :: Int -> Word8 -> State -> State
+addMult addr factor state@(State prev (x:subsequent)) =
+    let
+        (State prev' (x':subsequent'))  = incrementPointer addr state
+        x''                             = x' + fromIntegral factor * x
+        state''                         = State prev' (x'':subsequent')
+    in
+        incrementPointer (negate addr) state''
 
 setValue :: State -> Word8 -> State
 setValue (State previous (_:subsequent)) newValue = State previous (newValue : subsequent)
