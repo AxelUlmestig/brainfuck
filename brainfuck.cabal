@@ -20,8 +20,18 @@ library
                      , Lexer
                      , Interpreter
                      , Compiler.X86_64
-                     , Optimize
+                     , Optimizations
                      , Optimizations.ForLoops
+                     , Optimizations.MergeSetAndInc
+                     , Optimizations.OptimizeCellResets
+                     , Optimizations.PruneDeadLoops
+                     , Optimizations.RemoveEmptyLoops
+                     , Optimizations.RemoveInitialLoops
+                     , Optimizations.RemoveZeroPointerInc
+                     , Optimizations.RemoveZeroValueInc
+                     , Optimizations.SquishIncPointer
+                     , Optimizations.SquishIncValue
+                     , Optimizations.SquishSetValue
   build-depends:       base >= 4.7 && < 5
                      , word8
                      , parsec >= 3.1

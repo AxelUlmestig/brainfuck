@@ -12,7 +12,7 @@ import Compiler.X86_64      (compile)
 import Interpreter          (ExecutionState(..), interpret, supplyInput)
 import qualified Interpreter
 import Lexer                (pBrainfuck)
-import Optimize             (optimize)
+import Optimizations        (optimize)
 
 main :: IO ()
 main = do
