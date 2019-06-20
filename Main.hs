@@ -25,7 +25,12 @@ main = do
                 Right ops   -> case cmd of
                     "run"       -> interact $ Interpreter.init (optimize ops)
                     "compile"   -> compile (getFileName filePath) (optimize ops)
-        _ -> putStrLn "usage:\n$ brainfuck run [file]"
+        _ -> putStrLn   "usage:\n\
+                        \$ brainfuck <command> <file>\n\
+                        \\n\
+                        \available commands:\n\
+                        \run\n\
+                        \compile"
 
 interact :: ExecutionState -> IO ()
 interact (ProducedOutput state ops output)  = do
