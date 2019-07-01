@@ -1,12 +1,11 @@
 
 module Optimizations.ForLoops (optimizeForLoops) where
 
-import Control.Monad.State.Lazy     (runState, State, state)
-import Data.Map                     (empty, lookup, Map(..), singleton, toList, unionWith)
-import Data.Maybe                   (catMaybes)
-import Prelude hiding               (lookup)
+import Control.Monad.State.Lazy (runState, State, state)
+import Data.Map                 (empty, lookup, Map, singleton, toList, unionWith)
+import Prelude hiding           (lookup)
 
-import Brainfuck                    (Operation(..), Brainfuck)
+import Brainfuck                (Operation(..), Brainfuck)
 
 optimizeForLoops :: Brainfuck -> Brainfuck
 optimizeForLoops ((Loop id bf'):bf) = optimizeSubLoops id bf' ++ optimizeForLoops bf
@@ -42,9 +41,11 @@ isValid bf =
 loopIncrements :: Brainfuck -> Map Int Int
 loopIncrements bf =
     let
-        (updateMaps, _) = runState (traverse loopIncrementsInternal bf) 0
+        updatesListS    = traverse loopIncrementsInternal bf            :: State Int [Map Int Int]
+        updatesS        = foldr (unionWith (+)) empty <$> updatesListS  :: State Int (Map Int Int)
+        (updates, _)    = runState updatesS 0                           :: (Map Int Int, Int)
     in
-        foldr (unionWith (+)) empty updateMaps
+        updates
 
 loopIncrementsInternal :: Operation -> State Int (Map Int Int)
 loopIncrementsInternal (IncrementValue n)    = state $ \pOffset -> (singleton pOffset n, pOffset)
