@@ -24,11 +24,22 @@ encodeOperation (IncrementValue n)      = printf "addb $%d, (%%r15, %%r14, 1)" n
 encodeOperation OutputValue             = "call _printChar"
 encodeOperation ReadValue               = "call _readChar"
 encodeOperation (SetValue x)            = printf "movb $%d, (%%r15, %%r14, 1)" x
-encodeOperation (AddMult addr fctr)     = printf "\
-    \movb $%d, %%al\n\
-    \mulb (%%r15, %%r14, 1)\n\
-    \addb %%al, %d(%%r15, %%r14, 1)\n\
-    \" fctr addr
+encodeOperation (AddMult id addr fctr)  =
+    let
+        loopStart = printf "\
+          \fl%s_start:\n\
+          \cmpb $0, (%%r15, %%r14, 1)\n\
+          \je fl%s_end\n\n" id id
+
+        loopBody  = printf "\
+          \movb $%d, %%al\n\
+          \mulb (%%r15, %%r14, 1)\n\
+          \addb %%al, %d(%%r15, %%r14, 1)\n\n" fctr addr
+
+        loopEnd   = printf "fl%s_end:\n\n" id
+    in
+        loopStart ++ loopBody ++ loopEnd
+
 encodeOperation (Loop id bf)            =
     let
         loopStart       = printf "l%d_start:\ncmpb $0, (%%r15, %%r14, 1)\nje l%d_end\n\n" id id

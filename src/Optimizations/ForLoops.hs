@@ -17,13 +17,16 @@ optimizeSubLoops loopId bf =
     if isValid bf
     then
         let
-            increments                  = toList $ loopIncrements bf
-            operations                  = map (uncurry AddMult) increments ++ [SetValue 0]
+            loopIds                       = map (((show loopId)++) . ('_':) . show) [1 ..]
+            operations                    = zipWith
+                                              ($)
+                                              (map (uncurry . AddMult) loopIds)
+                                              (toList $ loopIncrements bf)
 
-            isNotSelfMult (AddMult 0 _) = False
-            isNotSelfMult _             = True
+            isNotSelfMult (AddMult _ 0 _) = False
+            isNotSelfMult _               = True
         in
-            filter isNotSelfMult operations
+            filter isNotSelfMult operations ++ [SetValue 0]
     else
         [Loop loopId (optimizeForLoops bf)]
 
