@@ -2,18 +2,16 @@
 module Optimizations.ForLoops (optimizeForLoops) where
 
 import Control.Monad.State.Lazy (runState, State, state)
-import Data.Map                 (empty, lookup, Map, singleton, toList, unionWith)
+import Data.Map                 (empty, delete, lookup, Map, singleton, toList, unionWith)
 import Prelude hiding           (lookup)
 
 import Brainfuck                (Operation(..), Brainfuck)
 
 optimizeForLoops :: Brainfuck -> Brainfuck
-optimizeForLoops ((Loop id bf'):bf) = optimizeSubLoops id bf' ++ optimizeForLoops bf
-optimizeForLoops (op:bf)            = op : optimizeForLoops bf
-optimizeForLoops []                 = []
+optimizeForLoops bf = bf >>= optimizeForLoop
 
-optimizeSubLoops :: Int -> Brainfuck -> Brainfuck
-optimizeSubLoops loopId bf =
+optimizeForLoop :: Operation -> Brainfuck
+optimizeForLoop (Loop loopId bf) =
     if isValid bf
     then
         let
@@ -22,13 +20,11 @@ optimizeSubLoops loopId bf =
                                               ($)
                                               (map (uncurry . AddMult) loopIds)
                                               (toList $ loopIncrements bf)
-
-            isNotSelfMult (AddMult _ 0 _) = False
-            isNotSelfMult _               = True
         in
-            filter isNotSelfMult operations ++ [SetValue 0]
+            operations ++ [SetValue 0]
     else
         [Loop loopId (optimizeForLoops bf)]
+optimizeForLoop op = [op]
 
 isValid :: Brainfuck -> Bool
 isValid bf =
@@ -48,7 +44,7 @@ loopIncrements bf =
         updatesS        = foldr (unionWith (+)) empty <$> updatesListS  :: State Int (Map Int Int)
         (updates, _)    = runState updatesS 0                           :: (Map Int Int, Int)
     in
-        updates
+        delete 0 updates -- prevent loop from touching index variable
 
 loopIncrementsInternal :: Operation -> State Int (Map Int Int)
 loopIncrementsInternal (IncrementValue n)    = state $ \pOffset -> (singleton pOffset n, pOffset)
