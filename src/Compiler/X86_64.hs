@@ -36,7 +36,7 @@ encodeOperation (AddMult id addr fctr)  =
           \mulb (%%r15, %%r14, 1)\n\
           \addb %%al, %d(%%r15, %%r14, 1)\n\n" fctr addr
 
-        loopEnd   = printf "fl%s_end:\n\n" id
+        loopEnd   = printf "fl%s_end:\n" id
     in
         loopStart ++ loopBody ++ loopEnd
 
