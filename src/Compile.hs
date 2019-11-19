@@ -38,7 +38,7 @@ compileArgsParser = CompileArgs
 compile :: CompileArgs -> IO ()
 compile (CompileArgs filePath debug) = do
   instructions <- readFile filePath
-  case (runP pBrainfuck 0 filePath instructions) of
+  case runP pBrainfuck 0 filePath instructions of
     Left err    -> print err
     Right ops   -> do
       let assembly    = X86_64.compile (optimize ops)

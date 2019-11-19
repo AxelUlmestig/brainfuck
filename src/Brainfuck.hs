@@ -1,4 +1,3 @@
-
 module Brainfuck (Operation(..), Brainfuck) where
 
 import Data.Word8

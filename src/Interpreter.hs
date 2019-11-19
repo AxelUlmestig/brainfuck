@@ -23,19 +23,19 @@ data ExecutionState
 -- Control Flow
 
 interpret :: State -> Brainfuck -> ExecutionState
-interpret state []                                  = Finished state
-interpret state ((IncrementPointer n):ops)          = interpret (incrementPointer n state) ops
-interpret state ((IncrementValue n):ops)            = interpret (incrementValue n state) ops
-interpret state ((SetValue n):ops)                  = interpret (setValue state (fromIntegral n)) ops
-interpret state ((AddMult _ addr fctr):ops)         = interpret (addMult addr (fromIntegral fctr) state) ops
-interpret state (OutputValue:ops)                   = ProducedOutput state ops (getValue state)
-interpret state (ReadValue:ops)                     = WaitingForInput state ops
-interpret state@(State _ (0:_)) ((Loop _ _):ops)    = interpret state ops
-interpret state ops@((Loop _ ops'):_)     =
-    case (interpret state ops') of
-        Finished state'                     -> interpret state' ops
-        WaitingForInput state' ops''        -> WaitingForInput state' (ops'' ++ ops)
-        ProducedOutput state' ops'' output  -> ProducedOutput state' (ops'' ++ ops) output
+interpret state []                                = Finished state
+interpret state (IncrementPointer n : ops)        = interpret (incrementPointer n state) ops
+interpret state (IncrementValue n : ops)          = interpret (incrementValue n state) ops
+interpret state (SetValue n : ops)                = interpret (setValue state (fromIntegral n)) ops
+interpret state (AddMult _ addr fctr : ops)       = interpret (addMult addr (fromIntegral fctr) state) ops
+interpret state (OutputValue : ops)               = ProducedOutput state ops (getValue state)
+interpret state (ReadValue : ops)                 = WaitingForInput state ops
+interpret state@(State _ (0:_)) (Loop _ _ : ops)  = interpret state ops
+interpret state ops@(Loop _ ops' : _)     =
+  case interpret state ops' of
+    Finished state'                     -> interpret state' ops
+    WaitingForInput state' ops''        -> WaitingForInput state' (ops'' ++ ops)
+    ProducedOutput state' ops'' output  -> ProducedOutput state' (ops'' ++ ops) output
 
 supplyInput :: State -> Brainfuck -> Word8 -> ExecutionState
 supplyInput state ops input = interpret (setValue state input) ops
@@ -66,7 +66,7 @@ incrementPointer n (State previous current)
 
 incrementValue :: Int -> State -> State
 incrementValue n (State previous (value:subsequent)) =
-    State previous ((value + (fromIntegral n)) : subsequent)
+    State previous ((value + fromIntegral n) : subsequent)
 
 addMult :: Int -> Word8 -> State -> State
 addMult addr factor state@(State prev (x:subsequent)) =
