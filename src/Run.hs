@@ -56,20 +56,5 @@ run (RunArgs optLevel filePath) = do
       Left err    -> print err
       Right ops   -> interact $ Interpreter.init (optimize optLevel ops)
 
-interact :: ExecutionState -> IO ()
-interact (ProducedOutput state ops output)  = do
-            putChar (word8ToChar output)
-            interact $ interpret state ops
-interact (WaitingForInput state ops)        = do
-            input <- getChar
-            interact $ supplyInput state ops (charToWord8 input)
-interact (Finished _)                       = return ()
-
-word8ToChar :: Word8 -> Char
-word8ToChar = unsafeCoerce
-
-charToWord8 :: Char -> Word8
-charToWord8 char
-    | ord char > 255    = 0
-    | otherwise         = unsafeCoerce char
+interact = Interpreter.interact getChar putChar
 
