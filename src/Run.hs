@@ -16,24 +16,32 @@ import Unsafe.Coerce        (unsafeCoerce)
 import Interpreter          (ExecutionState(..), interpret, supplyInput)
 import qualified Interpreter
 import Lexer                (pBrainfuck)
-import Optimizations        (optimize)
+import Optimizations        (OptimizationLevel(All), optimize)
 
 data RunArgs = RunArgs
-    {
-        file :: String
-    }
-    deriving (Show)
+  {
+    optimizations :: OptimizationLevel,
+    file :: String
+  }
+  deriving (Show, Read)
 
 runArgsParser :: Parser RunArgs
 runArgsParser = RunArgs
-  <$> argument str (metavar "FILE" <> help "brainfuck source code")
+  <$> option auto (
+    long "optimization-level" <>
+    value All <>
+    metavar "LEVEL" <>
+    help "optimization level")
+  <*> argument str (
+    metavar "FILE" <>
+    help "brainfuck source code")
 
 run :: RunArgs -> IO ()
-run (RunArgs filePath) = do
+run (RunArgs optLevel filePath) = do
   instructions <- readFile filePath
-  case (runP pBrainfuck 0 filePath instructions) of
+  case runP pBrainfuck 0 filePath instructions of
       Left err    -> print err
-      Right ops   -> interact $ Interpreter.init (optimize ops)
+      Right ops   -> interact $ Interpreter.init (optimize optLevel ops)
 
 interact :: ExecutionState -> IO ()
 interact (ProducedOutput state ops output)  = do

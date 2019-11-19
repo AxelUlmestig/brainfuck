@@ -7,12 +7,15 @@ module Compile (
 import Data.Semigroup         ((<>))
 import Options.Applicative    (
     argument,
+    auto,
     help,
     long,
     metavar,
+    option,
     Parser(..),
     str,
-    switch
+    switch,
+    value
   )
 import System.FilePath.Posix  (takeBaseName)
 import System.Process         (callCommand)
@@ -21,27 +24,37 @@ import Text.Printf            (printf)
 
 import qualified Compiler.X86_64 as X86_64
 import Lexer                  (pBrainfuck)
-import Optimizations          (optimize)
+import Optimizations          (OptimizationLevel(All), optimize)
 
 data CompileArgs = CompileArgs
-    {
-        file :: String,
-        debug :: Bool
-    }
-    deriving (Show)
+  {
+    debug :: Bool,
+    optimizations :: OptimizationLevel,
+    file :: String
+  }
+  deriving (Show, Read)
 
 compileArgsParser :: Parser CompileArgs
 compileArgsParser = CompileArgs
-  <$> argument str (metavar "FILE" <> help "brainfuck source code")
-  <*> switch (long "debug" <> help "Outputs object and assembly files")
+  <$> switch (
+    long "debug" <>
+    help "Outputs object and assembly files")
+  <*> option auto (
+    long "optimization-level" <>
+    value All <>
+    metavar "LEVEL" <>
+    help "optimization level")
+  <*> argument str (
+    metavar "FILE" <>
+    help "brainfuck source code")
 
 compile :: CompileArgs -> IO ()
-compile (CompileArgs filePath debug) = do
+compile (CompileArgs debug optLevel filePath) = do
   instructions <- readFile filePath
   case runP pBrainfuck 0 filePath instructions of
     Left err    -> print err
     Right ops   -> do
-      let assembly    = X86_64.compile (optimize ops)
+      let assembly    = X86_64.compile (optimize optLevel ops)
       let programName = takeBaseName filePath
 
       if debug then do
