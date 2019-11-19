@@ -44,12 +44,12 @@ compile (CompileArgs filePath debug) = do
       let assembly    = X86_64.compile (optimize ops)
       let programName = takeBaseName filePath
 
-      callCommand $ printf "echo '%s' | as -o %s.o" assembly programName
-      callCommand $ printf "ld %s.o -o %s" programName programName
-      callCommand $ printf "rm %s.o" programName
-
-      if debug then
-        callCommand $ printf "echo '%s' > '%s'.s" assembly programName
-      else
-        return ()
+      if debug then do
+        callCommand $ printf "echo '%s' > %s.s" assembly programName
+        callCommand $ printf "as --gstabs+ %s.s -o %s.o" programName programName
+        callCommand $ printf "ld %s.o -o %s" programName programName
+      else do
+        callCommand $ printf "echo '%s' | as -o %s.o" assembly programName
+        callCommand $ printf "ld %s.o -o %s" programName programName
+        callCommand $ printf "rm %s.o" programName
 
