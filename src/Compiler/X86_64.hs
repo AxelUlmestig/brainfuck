@@ -1,18 +1,11 @@
-
 module Compiler.X86_64 (compile) where
 
-import System.Process   (callCommand)
 import Text.Printf      (printf)
 
 import Brainfuck        (Operation(..), Brainfuck)
 
-compile :: String -> Brainfuck -> IO ()
-compile name bf = do
-    let assembly = encode bf
-    assemble name assembly
-
-encode :: Brainfuck -> String
-encode bf =
+compile :: Brainfuck -> String
+compile bf =
     let
         asm = unlines $ map encodeOperation bf
     in
@@ -47,12 +40,6 @@ encodeOperation (Loop id bf)            =
         loopBody        = unlines $ map encodeOperation bf
     in
         loopStart ++ loopBody ++ loopEnd
-
-assemble :: String -> String -> IO ()
-assemble programName assemblyCode = do
-    callCommand $ printf "echo '%s' > '%s'.s" assemblyCode programName
-    callCommand $ printf "echo '%s' | as -o %s.o" assemblyCode programName
-    callCommand $ printf "ld %s.o -o %s" programName programName
 
 header = "\n\
     \.section .bss\n\

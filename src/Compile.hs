@@ -15,7 +15,9 @@ import Options.Applicative    (
     switch
   )
 import System.FilePath.Posix  (takeBaseName)
+import System.Process         (callCommand)
 import Text.Parsec            (runP)
+import Text.Printf            (printf)
 
 import qualified Compiler.X86_64 as X86_64
 import Lexer                  (pBrainfuck)
@@ -37,6 +39,17 @@ compile :: CompileArgs -> IO ()
 compile (CompileArgs filePath debug) = do
   instructions <- readFile filePath
   case (runP pBrainfuck 0 filePath instructions) of
-      Left err    -> print err
-      Right ops   -> X86_64.compile (takeBaseName filePath) (optimize ops)
+    Left err    -> print err
+    Right ops   -> do
+      let assembly    = X86_64.compile (optimize ops)
+      let programName = takeBaseName filePath
+
+      callCommand $ printf "echo '%s' | as -o %s.o" assembly programName
+      callCommand $ printf "ld %s.o -o %s" programName programName
+      callCommand $ printf "rm %s.o" programName
+
+      if debug then
+        callCommand $ printf "echo '%s' > '%s'.s" assembly programName
+      else
+        return ()
 
