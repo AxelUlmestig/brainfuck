@@ -45,7 +45,7 @@ compileArgsParser = CompileArgs
     long "optimization-level" <>
     value All <>
     metavar "LEVEL" <>
-    help "optimization level")
+    help "all | none, default: all")
   <*> argument str (
     metavar "FILE" <>
     help "brainfuck source code")
