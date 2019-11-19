@@ -4,11 +4,13 @@ module Compile (
   compileArgsParser
 ) where
 
+import Control.Applicative    ((<**>))
 import Data.Semigroup         ((<>))
 import Options.Applicative    (
     argument,
     auto,
     help,
+    helper,
     long,
     metavar,
     option,
@@ -47,6 +49,7 @@ compileArgsParser = CompileArgs
   <*> argument str (
     metavar "FILE" <>
     help "brainfuck source code")
+  <**> helper
 
 compile :: CompileArgs -> IO ()
 compile (CompileArgs debug optLevel filePath) = do

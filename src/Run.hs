@@ -6,9 +6,21 @@ module Run (
 
 import Prelude hiding       (interact)
 
+import Control.Applicative  ((<**>))
 import Data.Char            (ord)
 import Data.Semigroup       ((<>))
-import Options.Applicative
+import Options.Applicative  (
+    argument,
+    auto,
+    help,
+    helper,
+    long,
+    metavar,
+    option,
+    Parser,
+    str,
+    value
+  )
 import Data.Word8           (Word8)
 import Text.Parsec          (runP)
 import Unsafe.Coerce        (unsafeCoerce)
@@ -35,6 +47,7 @@ runArgsParser = RunArgs
   <*> argument str (
     metavar "FILE" <>
     help "brainfuck source code")
+  <**> helper
 
 run :: RunArgs -> IO ()
 run (RunArgs optLevel filePath) = do
