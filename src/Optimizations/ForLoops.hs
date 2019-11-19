@@ -16,13 +16,13 @@ optimizeForLoop (Loop loopId bf) =
     let
       loopIds     = map ((show loopId ++) . ('_':) . show) [1 ..]
       operations  = zipWith
-                      ($)
-                      (map (uncurry . AddMult) loopIds)
+                      uncurry
+                      (map AddMult loopIds)
                       (toList $ delete 0 $ loopIncrements bf)
     in
       operations ++ [SetValue 0]
   else
-        [Loop loopId (optimizeForLoops bf)]
+    [Loop loopId (optimizeForLoops bf)]
 optimizeForLoop op = [op]
 
 isValid :: Brainfuck -> Bool
