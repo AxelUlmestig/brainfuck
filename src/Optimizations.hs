@@ -1,7 +1,6 @@
 module Optimizations (OptimizationLevel(..), optimize) where
 
 import Data.Char (toLower)
-import Text.ParserCombinators.ReadPrec
 
 import Brainfuck                            (Operation(..), Brainfuck)
 import Optimizations.RemoveInitialLoops     (removeInitialLoops)
@@ -20,10 +19,17 @@ data OptimizationLevel = All | None
   deriving (Show)
 
 instance Read OptimizationLevel where
-  readsPrec _ str = case map toLower str of
-    "all"  -> [(All, "")]
-    "none" -> [(None, "")]
-    _      -> []
+  readsPrec _ str =
+    let
+      firstThree  = map toLower $ take 3 str
+      firstFour   = map toLower $ take 4 str
+    in
+      if firstThree == "all" then
+        [(All, drop 3 str)]
+      else if firstFour == "none" then
+        [(None, drop 4 str)]
+      else
+        []
 
 optimize :: OptimizationLevel -> Brainfuck -> Brainfuck
 optimize None = id
