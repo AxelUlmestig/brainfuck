@@ -2,12 +2,12 @@
 
 ### Introduction
 
-Brainfuck is a very small and confusing programming language. This [Wikipedia
+Brainfuck is a very small and confusing programming language. [This Wikipedia
 article](https://en.wikipedia.org/wiki/Brainfuck) gives a pretty good summary
 of it.
 
-This repo contains tools for interpreting and compilng Brainfuck written in the
-very large and confusing programming language Haskell.
+This repository contains a Brainfuck compiler written in Haskell which is a
+very large and confusing programming language.
 
 ### Setup
 
@@ -84,7 +84,7 @@ run/compiled.
     to `-1` work like multiplication.
 
     E.g. `[->+>+++<<]` will result in
-    ```
+    ```C
     (p + 1)* += p* * 1
     (p + 2)* += p* * 3
     p*       = 0
@@ -92,3 +92,13 @@ run/compiled.
 
     (where `p` is the memory pointer and `p*` is the value that it points to)
 
+### Debugging
+
+If you want to debug the executables (and you're a masochist) you an compile
+with the `--debug` flag and then use `gdb` to step through the assembly code in
+the executable.
+
+```bash
+$ brainfuck compile hello.bf --debug
+$ gdb hello
+```
