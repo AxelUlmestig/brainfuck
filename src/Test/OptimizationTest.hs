@@ -3,6 +3,7 @@ module OptimizationTest (testCases) where
 import Prelude hiding (interact, read)
 
 import Control.Monad.State.Lazy
+import Control.Lens
 import Test.Framework.Providers.HUnit
 import Test.HUnit hiding (State)
 
@@ -31,6 +32,12 @@ data ProgramState = ProgramState {
   output :: [Char]
 }
 
+programStateInputL :: Lens' ProgramState [Char]
+programStateInputL = lens input (\ps i -> ps { input = i })
+
+programStateOutputL :: Lens' ProgramState [Char]
+programStateOutputL = lens output (\ps o -> ps { output = o })
+
 run :: [Char] -> Brainfuck -> [Char]
 run input bf = reverse . output $ execState (interact $ Interpreter.init bf) (ProgramState input [])
 
@@ -39,15 +46,12 @@ interact = Interpreter.interact read write
 
 read :: State ProgramState Char
 read = do
-  programState <- get
-  put $ ProgramState (tail $ input programState) (output programState) -- TODO lens?
-  return . head . input $ programState -- TODO lens?
+  nextInput <- head . input <$> get
+  modify $ over programStateInputL tail
+  return nextInput
 
 write :: Char -> State ProgramState ()
-write c = do
-  programState <- get
-  put $ ProgramState (input programState) (c : output programState) -- TODO lens?
-  return ()
+write c = modify $ over programStateOutputL (c:)
 
 labels = ["optimization " ++ show n | n <- [1..]]
 
