@@ -58,14 +58,18 @@ compile (CompileArgs debug optLevel filePath) = do
     Left err    -> print err
     Right ops   -> do
       let assembly    = X86_64.compile (optimize optLevel ops)
+
       let programName = takeBaseName filePath
+      let asmFilename = printf "%s.s" programName
+      let objFilename = printf "%s.o" programName :: String
+
+      writeFile asmFilename assembly
 
       if debug then do
-        callCommand $ printf "echo '%s' > %s.s" assembly programName
-        callCommand $ printf "as --gstabs+ %s.s -o %s.o" programName programName
-        callCommand $ printf "ld %s.o -o %s" programName programName
+        callCommand $ printf "as --gstabs+ %s -o %s" asmFilename objFilename
+        callCommand $ printf "ld %s -o %s" objFilename programName
       else do
-        callCommand $ printf "echo '%s' | as -o %s.o" assembly programName
-        callCommand $ printf "ld %s.o -o %s" programName programName
-        callCommand $ printf "rm %s.o" programName
+        callCommand $ printf "as %s -o %s" asmFilename objFilename
+        callCommand $ printf "ld %s -o %s" objFilename programName
+        callCommand $ printf "rm %s.*" programName
 

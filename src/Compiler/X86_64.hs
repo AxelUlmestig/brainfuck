@@ -44,10 +44,10 @@ encodeOperation (Loop id bf)            =
 header = "\n\
     \.section .bss\n\
     \    .lcomm memory, 30000\n\
-    \\\n\
+    \\n\
     \.section .text\n\
     \    .global _start\n\
-    \\\n\
+    \\n\
     \_printChar:\n\
     \movq $1, %rdi       # stdout file descriptor\n\
     \movq $memory, %rsi  # message to print\n\
@@ -56,7 +56,7 @@ header = "\n\
     \movq $1, %rax       # sys_write\n\
     \syscall\n\
     \ret\n\
-    \\\n\
+    \\n\
     \_readChar:\n\
     \movq $0, %rdi       # stdin file descriptor\n\
     \movq $memory, %rsi  # message to print\n\
@@ -65,7 +65,7 @@ header = "\n\
     \movq $0, %rax       # sys_read\n\
     \syscall\n\
     \ret\n\
-    \\\n\
+    \\n\
     \_start:\n\
     \movq $memory, %r15\n\
     \movq $0, %r14       # index\n\n"
