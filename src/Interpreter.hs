@@ -10,13 +10,14 @@ import Prelude hiding (init, interact, read)
 
 -- import Data.Word8 (charToWord8, word8ToChar)
 import Data.Char            (ord)
-import Data.Word8
+import Data.Map.Strict      (alter, empty, findWithDefault, insert, Map)
+import Data.Word8           (Word8)
 import Unsafe.Coerce        (unsafeCoerce)
 
 import Brainfuck (AddProd(..), Operation(..), Brainfuck)
 
 data State
-    = State [Word8] [Word8]
+    = State Int (Map Int Word8)
     deriving (Show)
 
 data ExecutionState
@@ -35,12 +36,13 @@ interpret state (SetValue n : ops)                = interpret (setValue state (f
 interpret state (ForLoop _ prods : ops)           = interpret (addProds state prods) ops
 interpret state (OutputValue : ops)               = ProducedOutput state ops (getValue state)
 interpret state (ReadValue : ops)                 = WaitingForInput state ops
-interpret state@(State _ (0:_)) (Loop _ _ : ops)  = interpret state ops
-interpret state ops@(Loop _ ops' : _)     =
-  case interpret state ops' of
-    Finished state'                     -> interpret state' ops
-    WaitingForInput state' ops''        -> WaitingForInput state' (ops'' ++ ops)
-    ProducedOutput state' ops'' output  -> ProducedOutput state' (ops'' ++ ops) output
+interpret state ops@(Loop _ body : afterLoop)
+  | getValue state == 0 = interpret state afterLoop
+  | otherwise =
+    case interpret state body of
+      Finished state'                     -> interpret state' ops
+      WaitingForInput state' body'        -> WaitingForInput state' (body' ++ ops)
+      ProducedOutput state' body' output  -> ProducedOutput state' (body' ++ ops) output
 
 supplyInput :: State -> Brainfuck -> Word8 -> ExecutionState
 supplyInput state ops input = interpret (setValue state input) ops
@@ -51,46 +53,35 @@ init = interpret initState
 -- State Manipulations
 
 initState :: State
-initState = State (repeat 0) (repeat 0)
+initState = State 0 empty
 
 incrementPointer :: Int -> State -> State
-incrementPointer n (State previous current)
-    | n > 0     =
-        let
-            previous'   = reverse (take n current) ++ previous
-            current'    = drop n current
-        in
-            State previous' current'
-
-    | otherwise =
-        let
-            previous'   = drop (abs n) previous
-            current'    = reverse (take (abs n) previous) ++ current
-        in
-            State previous' current'
+incrementPointer n (State p mem) = State (p + n) mem
 
 incrementValue :: Int -> State -> State
-incrementValue n (State previous (value:subsequent)) =
-    State previous ((value + fromIntegral n) : subsequent)
+incrementValue n (State p mem) = State p (alter f p mem)
+  where
+    n'  = fromIntegral n
+    f   = Just . maybe n' (n' +)
+
 
 addProds :: State -> [AddProd] -> State
 addProds = foldr addProd
 
 addProd :: AddProd -> State -> State
-addProd (AddProd addr intFactor) state@(State prev (x:subsequent)) =
-    let
-        factor                          = fromIntegral intFactor
-        (State prev' (x':subsequent'))  = incrementPointer addr state
-        x''                             = x' + fromIntegral factor * x
-        state''                         = State prev' (x'':subsequent')
-    in
-        incrementPointer (negate addr) state''
+addProd (AddProd addr intFactor) (State p mem) =
+  let
+    n   = findWithDefault 0 p mem
+    n'  = fromIntegral intFactor * n
+    f   = Just . maybe n' (n' +)
+  in
+    State p (alter f (p + addr) mem)
 
 setValue :: State -> Word8 -> State
-setValue (State previous (_:subsequent)) newValue = State previous (newValue : subsequent)
+setValue (State p mem) x = State p $ insert p x mem
 
 getValue :: State -> Word8
-getValue (State _ (value:_))  = value
+getValue (State p mem) = findWithDefault 0 p mem
 
 -- Monadic use
 
