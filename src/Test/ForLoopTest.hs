@@ -3,7 +3,7 @@ module ForLoopTest (testCases) where
 import Test.Framework.Providers.HUnit
 import Test.HUnit
 
-import Brainfuck (Brainfuck, Operation(..))
+import Brainfuck (AddProd(..), Brainfuck, Operation(..))
 import Optimizations  (OptimizationLevel(All, None), optimize)
 
 forLoop :: Brainfuck
@@ -26,8 +26,10 @@ test1 = TestCase $ assertEqual "For loop" expected actual
     actual = optimize All forLoop
     expected = [
         IncrementValue 4,
-        AddMult "0_1" 1 2,
-        AddMult "0_2" 3 3,
+        ForLoop 0 [
+          AddProd 1 2,
+          AddProd 3 3
+        ],
         SetValue 0
       ]
 

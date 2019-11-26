@@ -82,6 +82,7 @@ Test-Suite TestSuite
   other-modules:       Brainfuck
                        Interpreter
                        Lexer
+                       ForLoopTest,
                        Optimizations
                        Optimizations.ForLoops
                        Optimizations.MergeSetAndInc

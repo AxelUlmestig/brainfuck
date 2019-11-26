@@ -13,7 +13,7 @@ import Data.Char            (ord)
 import Data.Word8
 import Unsafe.Coerce        (unsafeCoerce)
 
-import Brainfuck (Operation(..), Brainfuck)
+import Brainfuck (AddProd(..), Operation(..), Brainfuck)
 
 data State
     = State [Word8] [Word8]
@@ -32,7 +32,7 @@ interpret state []                                = Finished state
 interpret state (IncrementPointer n : ops)        = interpret (incrementPointer n state) ops
 interpret state (IncrementValue n : ops)          = interpret (incrementValue n state) ops
 interpret state (SetValue n : ops)                = interpret (setValue state (fromIntegral n)) ops
-interpret state (AddMult _ addr fctr : ops)       = interpret (addMult addr (fromIntegral fctr) state) ops
+interpret state (ForLoop _ prods : ops)           = interpret (addProds state prods) ops
 interpret state (OutputValue : ops)               = ProducedOutput state ops (getValue state)
 interpret state (ReadValue : ops)                 = WaitingForInput state ops
 interpret state@(State _ (0:_)) (Loop _ _ : ops)  = interpret state ops
@@ -73,9 +73,13 @@ incrementValue :: Int -> State -> State
 incrementValue n (State previous (value:subsequent)) =
     State previous ((value + fromIntegral n) : subsequent)
 
-addMult :: Int -> Word8 -> State -> State
-addMult addr factor state@(State prev (x:subsequent)) =
+addProds :: State -> [AddProd] -> State
+addProds = foldr addProd
+
+addProd :: AddProd -> State -> State
+addProd (AddProd addr intFactor) state@(State prev (x:subsequent)) =
     let
+        factor                          = fromIntegral intFactor
         (State prev' (x':subsequent'))  = incrementPointer addr state
         x''                             = x' + fromIntegral factor * x
         state''                         = State prev' (x'':subsequent')
