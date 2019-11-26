@@ -16,7 +16,7 @@ data Operation
     | OutputValue
     | ReadValue
     | Loop LoopId [Operation]
-    deriving (Show)
+    deriving (Eq, Show)
 
 type Brainfuck = [Operation]
 
