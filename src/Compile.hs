@@ -14,7 +14,7 @@ import Options.Applicative    (
     long,
     metavar,
     option,
-    Parser(..),
+    Parser,
     str,
     switch,
     value

@@ -2,6 +2,7 @@ module Optimizations.RemoveInitialLoops (removeInitialLoops) where
 
 import Brainfuck    (Operation(..), Brainfuck)
 
+removeInitialLoops :: Brainfuck -> Brainfuck
 removeInitialLoops = f
 
 f :: Brainfuck -> Brainfuck

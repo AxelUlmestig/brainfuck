@@ -14,9 +14,6 @@ import Control.Lens                   (
     over,
     set
   )
-import Test.Framework.Providers.HUnit (
-    hUnitTestToTests
-  )
 import Test.HUnit                     (
     assertEqual,
     Test(
@@ -41,16 +38,19 @@ import TestPrograms                   (
     helloFromHell
   )
 
+test1 :: Test
 test1 = TestCase $ assertEqual "hello world" expected actual
   where
     expected  = "Hello World! 255\n"
     actual    = run [] $ optimize None helloFromHell
 
+test2 :: Test
 test2 = TestCase $ assertEqual "optimization shouldn't change the behaviour" optimized unoptimized
   where
     optimized   = run [] $ optimize All helloFromHell
     unoptimized = run [] $ optimize None helloFromHell
 
+tests :: [Test]
 tests = [
     test1,
     test2
@@ -69,9 +69,9 @@ programStateOutputL :: Lens' ProgramState [Char]
 programStateOutputL = lens output (\ps o -> ps { output = o })
 
 run :: [Char] -> Brainfuck -> [Char]
-run input bf =
+run inputs bf =
   let
-    initialState  = ProgramState input []
+    initialState  = ProgramState inputs []
     state         = interact bf
     result        = execState state initialState
   in
@@ -89,7 +89,11 @@ read = do
 write :: Char -> State ProgramState ()
 write c = modify $ over programStateOutputL (c:)
 
-labels = ["optimization " ++ show n | n <- [1..]]
+labels :: [String]
+labels = ["optimization " ++ show n | n <- ints]
+  where
+    ints = [1..] :: [Int]
 
-testCases = hUnitTestToTests . TestList . zipWith TestLabel labels $ tests
+testCases :: Test
+testCases = TestList . zipWith TestLabel labels $ tests
 

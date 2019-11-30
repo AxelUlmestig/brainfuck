@@ -25,7 +25,7 @@ interact' read write (ProducedOutput state ops output)  = do
 interact' read write (WaitingForInput state ops)        = do
             input <- read
             interact' read write $ supplyInput state ops (charToWord8 input)
-interact' read write (Finished _)                       = return ()
+interact' _ _ (Finished _)                              = return ()
 
 word8ToChar :: Word8 -> Char
 word8ToChar = unsafeCoerce

@@ -33,7 +33,9 @@ argsParser = subparser (compileCommand <> runCommand)
     compileCommand  = command "compile" $ info compileOptions $ progDesc "Compile brainfuck to an executable"
     runCommand      = command "run"     $ info runOptions     $ progDesc "Execute brainfuck code"
 
+compileOptions :: Parser Command
 compileOptions = Compile <$> compileArgsParser
 
+runOptions :: Parser Command
 runOptions = Run <$> runArgsParser
 

@@ -6,9 +6,9 @@ optimizeCellResets :: Brainfuck -> Brainfuck
 optimizeCellResets = map transformCellReset
 
 transformCellReset :: Operation -> Operation
-transformCellReset (Loop id bf)
+transformCellReset (Loop lId bf)
   | onlyContainsIncValue bf = SetValue 0
-  | otherwise               = Loop id (optimizeCellResets bf)
+  | otherwise               = Loop lId (optimizeCellResets bf)
 transformCellReset op = op
 
 onlyContainsIncValue :: Brainfuck -> Bool

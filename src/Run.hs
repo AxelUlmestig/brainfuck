@@ -22,6 +22,7 @@ import Options.Applicative  (
   )
 import Text.Parsec          (runP)
 
+import Brainfuck            (Brainfuck)
 import qualified Interpreter.Interact as Interpreter
 import Lexer                (pBrainfuck)
 import Optimizations        (OptimizationLevel(All), optimize)
@@ -52,5 +53,6 @@ run (RunArgs optLevel filePath) = do
     Left err  -> print err
     Right ops -> interact $ optimize optLevel ops
 
+interact :: Brainfuck -> IO ()
 interact = Interpreter.interact getChar putChar
 

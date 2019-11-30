@@ -1,8 +1,5 @@
 module ForLoopTest (testCases) where
 
-import Test.Framework.Providers.HUnit (
-    hUnitTestToTests
-  )
 import Test.HUnit                     (
     assertEqual,
     Test(
@@ -27,8 +24,7 @@ import Brainfuck                      (
   )
 import Optimizations                   (
     OptimizationLevel(
-      All,
-      None
+      All
     ),
     optimize
   )
@@ -48,6 +44,7 @@ forLoop = [
     ]
   ]
 
+test1 :: Test
 test1 = TestCase $ assertEqual "For loop" expected actual
   where
     actual = optimize All forLoop
@@ -60,11 +57,16 @@ test1 = TestCase $ assertEqual "For loop" expected actual
         SetValue 0
       ]
 
+tests :: [Test]
 tests = [
     test1
   ]
 
-labels = ["optimization " ++ show n | n <- [1..]]
+labels :: [String]
+labels = ["for loops " ++ show n | n <- ints]
+  where
+    ints = [1..] :: [Int]
 
-testCases = hUnitTestToTests . TestList . zipWith TestLabel labels $ tests
+testCases :: Test
+testCases = TestList . zipWith TestLabel labels $ tests
 

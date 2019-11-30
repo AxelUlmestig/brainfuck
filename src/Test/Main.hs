@@ -1,12 +1,16 @@
 module Main where
 
-import Test.Framework (defaultMain)
+import Test.Framework                 (defaultMain)
+import Test.Framework.Providers.HUnit (hUnitTestToTests)
 
 import qualified OptimizationTest
 import qualified ForLoopTest
 
-main = defaultMain (
-    OptimizationTest.testCases ++
+
+main :: IO ()
+main = defaultMain $
+  [
+    OptimizationTest.testCases,
     ForLoopTest.testCases
-  )
+  ] >>= hUnitTestToTests
 
