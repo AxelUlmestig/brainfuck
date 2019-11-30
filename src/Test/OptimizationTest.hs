@@ -8,7 +8,7 @@ import Test.Framework.Providers.HUnit
 import Test.HUnit hiding (State)
 
 import Brainfuck      (Brainfuck)
-import qualified Interpreter
+import qualified Interpreter.Interact as Interpreter
 import Optimizations  (OptimizationLevel(All, None), optimize)
 import TestPrograms   (helloFromHell)
 
@@ -39,9 +39,15 @@ programStateOutputL :: Lens' ProgramState [Char]
 programStateOutputL = lens output (\ps o -> ps { output = o })
 
 run :: [Char] -> Brainfuck -> [Char]
-run input bf = reverse . output $ execState (interact $ Interpreter.init bf) (ProgramState input [])
+run input bf =
+  let
+    initialState  = ProgramState input []
+    state         = interact bf
+    result        = execState state initialState
+  in
+    reverse (output result)
 
-interact :: Interpreter.ExecutionState -> State ProgramState ()
+interact :: Brainfuck -> State ProgramState ()
 interact = Interpreter.interact read write
 
 read :: State ProgramState Char

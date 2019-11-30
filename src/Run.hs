@@ -7,7 +7,6 @@ module Run (
 import Prelude hiding       (interact)
 
 import Control.Applicative  ((<**>))
-import Data.Char            (ord)
 import Data.Semigroup       ((<>))
 import Options.Applicative  (
     argument,
@@ -21,12 +20,9 @@ import Options.Applicative  (
     str,
     value
   )
-import Data.Word8           (Word8)
 import Text.Parsec          (runP)
-import Unsafe.Coerce        (unsafeCoerce)
 
-import Interpreter          (ExecutionState(..), interpret, supplyInput)
-import qualified Interpreter
+import qualified Interpreter.Interact as Interpreter
 import Lexer                (pBrainfuck)
 import Optimizations        (OptimizationLevel(All), optimize)
 
@@ -53,8 +49,8 @@ run :: RunArgs -> IO ()
 run (RunArgs optLevel filePath) = do
   instructions <- readFile filePath
   case runP pBrainfuck 0 filePath instructions of
-      Left err    -> print err
-      Right ops   -> interact $ Interpreter.init (optimize optLevel ops)
+    Left err  -> print err
+    Right ops -> interact $ optimize optLevel ops
 
 interact = Interpreter.interact getChar putChar
 

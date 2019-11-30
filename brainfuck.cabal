@@ -18,7 +18,8 @@ library
                      , src/Compiler
   exposed-modules:     Brainfuck
                      , Lexer
-                     , Interpreter
+                     , Interpreter.Interact
+                     , Interpreter.StateMachine
                      , Compile
                      , Compiler.X86_64
                      , Optimizations
@@ -80,7 +81,8 @@ Test-Suite TestSuite
   default-language:    Haskell2010
   ghc-options: -threaded -rtsopts
   other-modules:       Brainfuck
-                       Interpreter
+                       Interpreter.Interact
+                       Interpreter.StateMachine
                        Lexer
                        ForLoopTest,
                        Optimizations

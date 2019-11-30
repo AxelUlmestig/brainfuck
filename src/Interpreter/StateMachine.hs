@@ -1,30 +1,26 @@
-module Interpreter (
-    ExecutionState(..),
-    interact,
-    interpret,
-    supplyInput,
-    init
+module Interpreter.StateMachine (
+  ExecutionState(..),
+  interpret,
+  supplyInput,
+  init
 ) where
 
-import Prelude hiding (init, interact, read)
+import Prelude hiding (init)
 
--- import Data.Word8 (charToWord8, word8ToChar)
-import Data.Char            (ord)
 import Data.Map.Strict      (alter, empty, findWithDefault, insert, Map)
 import Data.Word8           (Word8)
-import Unsafe.Coerce        (unsafeCoerce)
 
-import Brainfuck (AddProd(..), Operation(..), Brainfuck)
+import Brainfuck            (AddProd(..), Operation(..), Brainfuck)
 
 data State
-    = State Int (Map Int Word8)
-    deriving (Show)
+  = State Int (Map Int Word8)
+  deriving (Show)
 
 data ExecutionState
-    = WaitingForInput State Brainfuck
-    | ProducedOutput State Brainfuck Word8
-    | Finished State
-    deriving (Show)
+  = WaitingForInput State Brainfuck
+  | ProducedOutput State Brainfuck Word8
+  | Finished State
+  deriving (Show)
 
 -- Control Flow
 
@@ -82,23 +78,4 @@ setValue (State p mem) x = State p $ insert p x mem
 
 getValue :: State -> Word8
 getValue (State p mem) = findWithDefault 0 p mem
-
--- Monadic use
-
-interact :: Monad m => m Char -> (Char -> m ()) -> ExecutionState -> m ()
-interact read write (ProducedOutput state ops output)  = do
-            write (word8ToChar output)
-            interact read write $ interpret state ops
-interact read write (WaitingForInput state ops)        = do
-            input <- read
-            interact read write $ supplyInput state ops (charToWord8 input)
-interact read write (Finished _)                       = return ()
-
-word8ToChar :: Word8 -> Char
-word8ToChar = unsafeCoerce
-
-charToWord8 :: Char -> Word8
-charToWord8 char
-    | ord char > 255    = 0
-    | otherwise         = unsafeCoerce char
 
