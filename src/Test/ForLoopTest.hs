@@ -1,10 +1,37 @@
 module ForLoopTest (testCases) where
 
-import Test.Framework.Providers.HUnit
-import Test.HUnit
+import Test.Framework.Providers.HUnit (
+    hUnitTestToTests
+  )
+import Test.HUnit                     (
+    assertEqual,
+    Test(
+      TestCase,
+      TestLabel,
+      TestList
+    )
+  )
 
-import Brainfuck (AddProd(..), Brainfuck, Operation(..))
-import Optimizations  (OptimizationLevel(All, None), optimize)
+import Brainfuck                      (
+    AddProd(
+      AddProd
+    ),
+    Brainfuck,
+    Operation(
+      ForLoop,
+      IncrementPointer,
+      IncrementValue,
+      Loop,
+      SetValue
+    )
+  )
+import Optimizations                   (
+    OptimizationLevel(
+      All,
+      None
+    ),
+    optimize
+  )
 
 forLoop :: Brainfuck
 forLoop = [

@@ -2,15 +2,44 @@ module OptimizationTest (testCases) where
 
 import Prelude hiding (interact, read)
 
-import Control.Monad.State.Lazy
-import Control.Lens
-import Test.Framework.Providers.HUnit
-import Test.HUnit hiding (State)
+import Control.Monad.State.Lazy       (
+    execState,
+    get,
+    modify,
+    State
+  )
+import Control.Lens                   (
+    lens,
+    Lens',
+    over,
+    set
+  )
+import Test.Framework.Providers.HUnit (
+    hUnitTestToTests
+  )
+import Test.HUnit                     (
+    assertEqual,
+    Test(
+      TestCase,
+      TestLabel,
+      TestList
+    )
+  )
 
-import Brainfuck      (Brainfuck)
+import Brainfuck                      (
+    Brainfuck
+  )
 import qualified Interpreter.Interact as Interpreter
-import Optimizations  (OptimizationLevel(All, None), optimize)
-import TestPrograms   (helloFromHell)
+import Optimizations                  (
+    OptimizationLevel(
+      All,
+      None
+    ),
+    optimize
+  )
+import TestPrograms                   (
+    helloFromHell
+  )
 
 test1 = TestCase $ assertEqual "hello world" expected actual
   where
@@ -52,9 +81,9 @@ interact = Interpreter.interact read write
 
 read :: State ProgramState Char
 read = do
-  nextInput <- head . input <$> get
-  modify $ over programStateInputL tail
-  return nextInput
+  (x:xs)  <- input <$> get
+  modify $ set programStateInputL xs
+  return x
 
 write :: Char -> State ProgramState ()
 write c = modify $ over programStateOutputL (c:)
