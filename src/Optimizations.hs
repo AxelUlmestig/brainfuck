@@ -2,7 +2,7 @@ module Optimizations (OptimizationLevel(..), optimize) where
 
 import Data.Char (toLower)
 
-import Brainfuck                            (Operation(..), Brainfuck)
+import Brainfuck                            (Brainfuck)
 import Optimizations.RemoveInitialLoops     (removeInitialLoops)
 import Optimizations.ForLoops               (optimizeForLoops)
 import Optimizations.MergeSetAndInc         (mergeSetAndInc)
@@ -18,6 +18,7 @@ import Optimizations.SquishIncPointer       (squishIncPointer)
 data OptimizationLevel = All | None
   deriving (Show)
 
+{-# ANN module "HLint: ignore Use list comprehension" #-}
 instance Read OptimizationLevel where
   readsPrec _ str =
     let

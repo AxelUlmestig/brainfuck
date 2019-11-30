@@ -56,6 +56,7 @@ tests = [
     test2
   ]
 
+{-# ANN module "HLint: ignore Use String" #-}
 data ProgramState = ProgramState {
   input :: [Char],
   output :: [Char]

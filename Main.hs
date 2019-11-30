@@ -28,11 +28,10 @@ execute (Compile args)  = compile args
 execute (Run args)      = run args
 
 argsParser :: Parser Command
-argsParser = subparser
-  (
-    (command "compile" $ info compileOptions $ progDesc "Compile brainfuck to an executable")
- <> (command "run"     $ info runOptions     $ progDesc "Execute brainfuck code")
-  )
+argsParser = subparser (compileCommand <> runCommand)
+  where
+    compileCommand  = command "compile" $ info compileOptions $ progDesc "Compile brainfuck to an executable"
+    runCommand      = command "run"     $ info runOptions     $ progDesc "Execute brainfuck code"
 
 compileOptions = Compile <$> compileArgsParser
 

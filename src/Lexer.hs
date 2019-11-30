@@ -1,14 +1,39 @@
 
 module Lexer (pBrainfuck) where
 
-import Data.Maybe   (catMaybes)
-import Text.Parsec  (getState, modifyState, Parsec)
-import Text.ParserCombinators.Parsec
+import Data.Functor                   (
+    ($>)
+  )
+import Data.Maybe                     (
+    catMaybes
+  )
+import Text.Parsec                    (
+    getState,
+    modifyState,
+    Parsec
+  )
+import Text.ParserCombinators.Parsec  (
+    between,
+    char,
+    choice,
+    many,
+    many1,
+    noneOf
+  )
 
-import Brainfuck    (Operation(..), Brainfuck)
+import Brainfuck                      (
+    Operation(
+      IncrementPointer,
+      IncrementValue,
+      Loop,
+      OutputValue,
+      ReadValue
+    ),
+    Brainfuck
+  )
 
 pBrainfuck :: Parsec String Int Brainfuck
-pBrainfuck = catMaybes <$> (many $ choice [
+pBrainfuck = catMaybes <$> many (choice [
         pIncrementPointer,
         pDecrementPointer,
         pIncrementValue,
@@ -45,7 +70,7 @@ pLoop = do
     return $ Just (Loop loopCount loop)
 
 pIgnored :: Parsec String Int (Maybe Operation)
-pIgnored = many1 (noneOf "><+-.,[]") *> pure Nothing
+pIgnored = many1 (noneOf "><+-.,[]") $> Nothing
 
 parseChar :: Char -> Operation -> Parsec String Int (Maybe Operation)
 parseChar ch bf = const (Just bf) <$> char ch
