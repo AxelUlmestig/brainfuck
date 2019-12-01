@@ -1,6 +1,6 @@
 module Optimizations.SquishIncPointer (squishIncPointer) where
 
-import Brainfuck    (Operation(..), Brainfuck)
+import           Brainfuck (Brainfuck, Operation (..))
 
 squishIncPointer :: Brainfuck -> Brainfuck
 squishIncPointer = f

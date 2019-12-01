@@ -4,37 +4,25 @@ module Compile (
   compileArgsParser
 ) where
 
-import Control.Applicative    ((<**>))
-import Data.Semigroup         ((<>))
-import Options.Applicative    (
-    action,
-    argument,
-    auto,
-    completeWith,
-    help,
-    helper,
-    long,
-    metavar,
-    option,
-    Parser,
-    str,
-    switch,
-    value
-  )
-import System.FilePath.Posix  (takeBaseName)
-import System.Process         (callCommand)
-import Text.Parsec            (runP)
-import Text.Printf            (printf)
+import           Control.Applicative   ((<**>))
+import           Data.Semigroup        ((<>))
+import           Options.Applicative   (Parser, action, argument, auto,
+                                        completeWith, help, helper, long,
+                                        metavar, option, str, switch, value)
+import           System.FilePath.Posix (takeBaseName)
+import           System.Process        (callCommand)
+import           Text.Parsec           (runP)
+import           Text.Printf           (printf)
 
-import qualified Compiler.X86_64 as X86_64
-import Lexer                  (pBrainfuck)
-import Optimizations          (OptimizationLevel(All), optimize)
+import qualified Compiler.X86_64       as X86_64
+import           Lexer                 (pBrainfuck)
+import           Optimizations         (OptimizationLevel (All), optimize)
 
 data CompileArgs = CompileArgs
   {
-    debug :: Bool,
+    debug         :: Bool,
     optimizations :: OptimizationLevel,
-    file :: String
+    file          :: String
   }
   deriving (Show, Read)
 

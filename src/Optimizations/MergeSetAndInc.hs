@@ -1,6 +1,6 @@
 module Optimizations.MergeSetAndInc (mergeSetAndInc) where
 
-import Brainfuck    (Operation(..), Brainfuck)
+import           Brainfuck (Brainfuck, Operation (..))
 
 mergeSetAndInc :: Brainfuck -> Brainfuck
 mergeSetAndInc = f

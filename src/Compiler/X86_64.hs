@@ -1,22 +1,8 @@
 module Compiler.X86_64 (compile) where
 
-import Text.Printf  (printf)
+import           Text.Printf (printf)
 
-import Brainfuck    (
-    AddProd(
-      AddProd
-    ),
-    Operation(
-      ForLoop,
-      IncrementPointer,
-      IncrementValue,
-      Loop,
-      OutputValue,
-      ReadValue,
-      SetValue
-    ),
-    Brainfuck
-  )
+import           Brainfuck   (AddProd (AddProd), Brainfuck, Operation (ForLoop, IncrementPointer, IncrementValue, Loop, OutputValue, ReadValue, SetValue))
 
 compile :: Brainfuck -> String
 compile bf =

@@ -1,6 +1,6 @@
 module Optimizations.PruneDeadLoops (pruneDeadLoops) where
 
-import Brainfuck    (Operation(..), Brainfuck)
+import           Brainfuck (Brainfuck, Operation (..))
 
 pruneDeadLoops :: Brainfuck -> Brainfuck
 pruneDeadLoops = f

@@ -1,42 +1,17 @@
 module OptimizationTest (testCases) where
 
-import Prelude hiding (interact, read)
+import           Prelude                  hiding (interact, read)
 
-import Control.Monad.State.Lazy       (
-    execState,
-    get,
-    modify,
-    State
-  )
-import Control.Lens                   (
-    lens,
-    Lens',
-    over,
-    set
-  )
-import Test.HUnit                     (
-    assertEqual,
-    Test(
-      TestCase,
-      TestLabel,
-      TestList
-    )
-  )
+import           Control.Lens             (Lens', lens, over, set)
+import           Control.Monad.State.Lazy (State, execState, get, modify)
+import           Test.HUnit               (Test (TestCase, TestLabel, TestList),
+                                           assertEqual)
 
-import Brainfuck                      (
-    Brainfuck
-  )
-import qualified Interpreter.Interact as Interpreter
-import Optimizations                  (
-    OptimizationLevel(
-      All,
-      None
-    ),
-    optimize
-  )
-import TestPrograms                   (
-    helloFromHell
-  )
+import           Brainfuck                (Brainfuck)
+import qualified Interpreter.Interact     as Interpreter
+import           Optimizations            (OptimizationLevel (All, None),
+                                           optimize)
+import           TestPrograms             (helloFromHell)
 
 test1 :: Test
 test1 = TestCase $ assertEqual "hello world" expected actual
@@ -58,7 +33,7 @@ tests = [
 
 {-# ANN module "HLint: ignore Use String" #-}
 data ProgramState = ProgramState {
-  input :: [Char],
+  input  :: [Char],
   output :: [Char]
 }
 

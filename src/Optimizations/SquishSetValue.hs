@@ -1,6 +1,6 @@
 module Optimizations.SquishSetValue (squishSetValue) where
 
-import Brainfuck    (Operation(..), Brainfuck)
+import           Brainfuck (Brainfuck, Operation (..))
 
 squishSetValue :: Brainfuck -> Brainfuck
 squishSetValue = f

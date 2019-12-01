@@ -1,10 +1,12 @@
 module Optimizations.ForLoops (optimizeForLoops) where
 
-import Control.Monad.State.Lazy (runState, State, state)
-import Data.Map                 (empty, delete, lookup, Map, singleton, toList, unionWith)
-import Prelude hiding           (lookup)
+import           Control.Monad.State.Lazy (State, runState, state)
+import           Data.Map                 (Map, delete, empty, lookup,
+                                           singleton, toList, unionWith)
+import           Prelude                  hiding (lookup)
 
-import Brainfuck                (AddProd(..), Operation(..), Brainfuck)
+import           Brainfuck                (AddProd (..), Brainfuck,
+                                           Operation (..))
 
 optimizeForLoops :: Brainfuck -> Brainfuck
 optimizeForLoops bf = bf >>= optimizeForLoop

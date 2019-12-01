@@ -5,12 +5,12 @@ module Interpreter.StateMachine (
   init
 ) where
 
-import Prelude hiding (init)
+import           Prelude         hiding (init)
 
-import Data.Map.Strict      (alter, empty, findWithDefault, insert, Map)
-import Data.Word8           (Word8)
+import           Data.Map.Strict (Map, alter, empty, findWithDefault, insert)
+import           Data.Word8      (Word8)
 
-import Brainfuck            (AddProd(..), Operation(..), Brainfuck)
+import           Brainfuck       (AddProd (..), Brainfuck, Operation (..))
 
 data State
   = State Int (Map Int Word8)

@@ -1,10 +1,10 @@
 module Main where
 
-import Test.Framework                 (defaultMain)
-import Test.Framework.Providers.HUnit (hUnitTestToTests)
+import           Test.Framework                 (defaultMain)
+import           Test.Framework.Providers.HUnit (hUnitTestToTests)
 
-import qualified OptimizationTest
 import qualified ForLoopTest
+import qualified OptimizationTest
 
 
 main :: IO ()

@@ -1,36 +1,13 @@
 
 module Lexer (pBrainfuck) where
 
-import Data.Functor                   (
-    ($>)
-  )
-import Data.Maybe                     (
-    catMaybes
-  )
-import Text.Parsec                    (
-    getState,
-    modifyState,
-    Parsec
-  )
-import Text.ParserCombinators.Parsec  (
-    between,
-    char,
-    choice,
-    many,
-    many1,
-    noneOf
-  )
+import           Data.Functor                  (($>))
+import           Data.Maybe                    (catMaybes)
+import           Text.Parsec                   (Parsec, getState, modifyState)
+import           Text.ParserCombinators.Parsec (between, char, choice, many,
+                                                many1, noneOf)
 
-import Brainfuck                      (
-    Operation(
-      IncrementPointer,
-      IncrementValue,
-      Loop,
-      OutputValue,
-      ReadValue
-    ),
-    Brainfuck
-  )
+import           Brainfuck                     (Brainfuck, Operation (IncrementPointer, IncrementValue, Loop, OutputValue, ReadValue))
 
 pBrainfuck :: Parsec String Int Brainfuck
 pBrainfuck = catMaybes <$> many (choice [

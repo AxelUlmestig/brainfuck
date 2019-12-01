@@ -2,18 +2,14 @@ module Interpreter.Interact (
   interact
 ) where
 
-import Prelude hiding (init, interact, read)
+import           Prelude                  hiding (init, interact, read)
 
-import Brainfuck                (Brainfuck)
-import Data.Char                (ord)
-import Data.Word8               (Word8)
-import Interpreter.StateMachine (
-    ExecutionState(ProducedOutput, WaitingForInput, Finished),
-    init,
-    interpret,
-    supplyInput
-  )
-import Unsafe.Coerce            (unsafeCoerce)
+import           Brainfuck                (Brainfuck)
+import           Data.Char                (ord)
+import           Data.Word8               (Word8)
+import           Interpreter.StateMachine (ExecutionState (Finished, ProducedOutput, WaitingForInput),
+                                           init, interpret, supplyInput)
+import           Unsafe.Coerce            (unsafeCoerce)
 
 interact :: Monad m => m Char -> (Char -> m ()) -> Brainfuck -> m ()
 interact read write = interact' read write . init

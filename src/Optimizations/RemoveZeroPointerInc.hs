@@ -1,6 +1,6 @@
 module Optimizations.RemoveZeroPointerInc (removeZeroPointerInc) where
 
-import Brainfuck    (Operation(..), Brainfuck)
+import           Brainfuck (Brainfuck, Operation (..))
 
 removeZeroPointerInc :: Brainfuck -> Brainfuck
 removeZeroPointerInc = f

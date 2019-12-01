@@ -1,19 +1,19 @@
 module Optimizations (OptimizationLevel(..), optimize) where
 
-import Data.Char (toLower)
+import           Data.Char                          (toLower)
 
-import Brainfuck                            (Brainfuck)
-import Optimizations.RemoveInitialLoops     (removeInitialLoops)
-import Optimizations.ForLoops               (optimizeForLoops)
-import Optimizations.MergeSetAndInc         (mergeSetAndInc)
-import Optimizations.SquishSetValue         (squishSetValue)
-import Optimizations.PruneDeadLoops         (pruneDeadLoops)
-import Optimizations.OptimizeCellResets     (optimizeCellResets)
-import Optimizations.RemoveEmptyLoops       (removeEmptyLoops)
-import Optimizations.RemoveZeroValueInc     (removeZeroValueInc)
-import Optimizations.RemoveZeroPointerInc   (removeZeroPointerInc)
-import Optimizations.SquishIncValue         (squishIncValue)
-import Optimizations.SquishIncPointer       (squishIncPointer)
+import           Brainfuck                          (Brainfuck)
+import           Optimizations.ForLoops             (optimizeForLoops)
+import           Optimizations.MergeSetAndInc       (mergeSetAndInc)
+import           Optimizations.OptimizeCellResets   (optimizeCellResets)
+import           Optimizations.PruneDeadLoops       (pruneDeadLoops)
+import           Optimizations.RemoveEmptyLoops     (removeEmptyLoops)
+import           Optimizations.RemoveInitialLoops   (removeInitialLoops)
+import           Optimizations.RemoveZeroPointerInc (removeZeroPointerInc)
+import           Optimizations.RemoveZeroValueInc   (removeZeroValueInc)
+import           Optimizations.SquishIncPointer     (squishIncPointer)
+import           Optimizations.SquishIncValue       (squishIncValue)
+import           Optimizations.SquishSetValue       (squishSetValue)
 
 data OptimizationLevel = All | None
   deriving (Show)

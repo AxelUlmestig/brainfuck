@@ -1,14 +1,14 @@
 module TestPrograms (helloFromHell) where
 
-import Text.Parsec  (runP)
+import           Text.Parsec (runP)
 
-import Brainfuck    (Brainfuck)
-import Lexer        (pBrainfuck)
+import           Brainfuck   (Brainfuck)
+import           Lexer       (pBrainfuck)
 
 helloFromHell :: Brainfuck
 helloFromHell = case runP pBrainfuck 0 "" helloFromHellRaw of
-  Right bf  -> bf
-  Left err  -> error $ show err
+  Right bf -> bf
+  Left err -> error $ show err
 
 helloFromHellRaw = "\
   \[\

@@ -1,6 +1,6 @@
 module Optimizations.OptimizeCellResets (optimizeCellResets) where
 
-import Brainfuck    (Operation(..), Brainfuck)
+import           Brainfuck (Brainfuck, Operation (..))
 
 optimizeCellResets :: Brainfuck -> Brainfuck
 optimizeCellResets = map transformCellReset

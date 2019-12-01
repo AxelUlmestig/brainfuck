@@ -1,6 +1,6 @@
 module Optimizations.RemoveZeroValueInc (removeZeroValueInc) where
 
-import Brainfuck    (Operation(..), Brainfuck)
+import           Brainfuck (Brainfuck, Operation (..))
 
 removeZeroValueInc :: Brainfuck -> Brainfuck
 removeZeroValueInc = f

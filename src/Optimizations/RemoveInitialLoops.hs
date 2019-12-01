@@ -1,6 +1,6 @@
 module Optimizations.RemoveInitialLoops (removeInitialLoops) where
 
-import Brainfuck    (Operation(..), Brainfuck)
+import           Brainfuck (Brainfuck, Operation (..))
 
 removeInitialLoops :: Brainfuck -> Brainfuck
 removeInitialLoops = f

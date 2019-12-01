@@ -4,35 +4,24 @@ module Run (
   runArgsParser
 ) where
 
-import Prelude hiding       (interact)
+import           Prelude              hiding (interact)
 
-import Control.Applicative  ((<**>))
-import Data.Semigroup       ((<>))
-import Options.Applicative  (
-    action,
-    argument,
-    auto,
-    completeWith,
-    help,
-    helper,
-    long,
-    metavar,
-    option,
-    Parser,
-    str,
-    value
-  )
-import Text.Parsec          (runP)
+import           Control.Applicative  ((<**>))
+import           Data.Semigroup       ((<>))
+import           Options.Applicative  (Parser, action, argument, auto,
+                                       completeWith, help, helper, long,
+                                       metavar, option, str, value)
+import           Text.Parsec          (runP)
 
-import Brainfuck            (Brainfuck)
+import           Brainfuck            (Brainfuck)
 import qualified Interpreter.Interact as Interpreter
-import Lexer                (pBrainfuck)
-import Optimizations        (OptimizationLevel(All), optimize)
+import           Lexer                (pBrainfuck)
+import           Optimizations        (OptimizationLevel (All), optimize)
 
 data RunArgs = RunArgs
   {
     optimizations :: OptimizationLevel,
-    file :: String
+    file          :: String
   }
   deriving (Show, Read)
 
