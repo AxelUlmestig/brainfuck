@@ -85,12 +85,12 @@ run/compiled.
 
     E.g. `[->+>+++<<]` will result in
     ```C
-    (p + 1)* += p* * 1
-    (p + 2)* += p* * 3
-    p*       = 0
+    *(p + 1) += *p * 1
+    *(p + 2) += *p * 3
+    *p       = 0
     ```
 
-    (where `p` is the memory pointer and `p*` is the value that it points to)
+    (where `p` is the memory pointer and `*p` is the value that it points to)
 
 ### Debugging
 
