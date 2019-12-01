@@ -7,8 +7,10 @@ module Compile (
 import Control.Applicative    ((<**>))
 import Data.Semigroup         ((<>))
 import Options.Applicative    (
+    action,
     argument,
     auto,
+    completeWith,
     help,
     helper,
     long,
@@ -45,10 +47,12 @@ compileArgsParser = CompileArgs
     long "optimization-level" <>
     value All <>
     metavar "LEVEL" <>
-    help "all | none, default: all")
+    help "all | none, default: all" <>
+    completeWith ["all", "none"])
   <*> argument str (
     metavar "FILE" <>
-    help "brainfuck source code")
+    help "brainfuck source code" <>
+    action "file")
   <**> helper
 
 compile :: CompileArgs -> IO ()

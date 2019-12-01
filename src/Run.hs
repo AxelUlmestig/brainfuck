@@ -9,8 +9,10 @@ import Prelude hiding       (interact)
 import Control.Applicative  ((<**>))
 import Data.Semigroup       ((<>))
 import Options.Applicative  (
+    action,
     argument,
     auto,
+    completeWith,
     help,
     helper,
     long,
@@ -40,10 +42,12 @@ runArgsParser = RunArgs
     long "optimization-level" <>
     value All <>
     metavar "LEVEL" <>
-    help "all | none, default: all")
+    help "all | none, default: all" <>
+    completeWith ["all", "none"])
   <*> argument str (
     metavar "FILE" <>
-    help "brainfuck source code")
+    help "brainfuck source code" <>
+    action "file")
   <**> helper
 
 run :: RunArgs -> IO ()
