@@ -6,8 +6,8 @@ Brainfuck is a very small and confusing programming language. [This Wikipedia
 article](https://en.wikipedia.org/wiki/Brainfuck) gives a pretty good summary
 of it.
 
-This repository contains a Brainfuck compiler written in Haskell which is a
-very large and confusing programming language.
+This repository contains a Brainfuck compiler written in a very large and
+confusing programming language called Haskell.
 
 ### Setup
 
