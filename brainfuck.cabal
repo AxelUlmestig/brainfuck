@@ -15,13 +15,15 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-                     , src/Compiler
+                     , src/Compile
   exposed-modules:     Brainfuck
                      , Lexer
                      , Interpreter.Interact
                      , Interpreter.StateMachine
                      , Compile
-                     , Compiler.X86_64
+                     , Compile.CompileInput
+                     , Compile.Linux.X86_64
+                     , Compile.Linux.Compile
                      , Optimizations
                      , Optimizations.ForLoops
                      , Optimizations.MergeSetAndInc

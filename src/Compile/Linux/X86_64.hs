@@ -1,4 +1,4 @@
-module Compiler.X86_64 (compile) where
+module Compile.Linux.X86_64 (compile) where
 
 import           Text.Printf (printf)
 
