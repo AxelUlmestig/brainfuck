@@ -4,8 +4,11 @@ module Compile (
   compileArgsParser
 ) where
 
+import           Prelude               hiding (readFile)
+
 import           Control.Applicative   ((<**>))
 import           Data.Semigroup        ((<>))
+import           Data.Text.IO          (readFile)
 import           Options.Applicative   (Parser, action, argument, auto,
                                         completeWith, help, helper, long,
                                         metavar, option, str, switch, value)

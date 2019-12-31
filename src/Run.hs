@@ -4,10 +4,11 @@ module Run (
   runArgsParser
 ) where
 
-import           Prelude              hiding (interact)
+import           Prelude              hiding (interact, readFile)
 
 import           Control.Applicative  ((<**>))
 import           Data.Semigroup       ((<>))
+import           Data.Text.IO         (readFile)
 import           Options.Applicative  (Parser, action, argument, auto,
                                        completeWith, help, helper, long,
                                        metavar, option, str, value)

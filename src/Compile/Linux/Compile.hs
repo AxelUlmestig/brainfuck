@@ -1,7 +1,14 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Compile.Linux.Compile (
   compile
 ) where
 
+import           Prelude              hiding (writeFile)
+
+import           Data.Semigroup       ((<>))
+import           Data.Text            (Text, pack, unpack)
+import           Data.Text.IO         (writeFile)
 import           System.Exit          (die)
 import           System.Info          (arch)
 import           System.Process       (callCommand)
@@ -19,7 +26,7 @@ compile (CompileInput debug programName bf) =
       let assembly    = comp bf
 
       let asmFilename = printf "%s.s" programName
-      let objFilename = printf "%s.o" programName :: String
+      let objFilename = pack $ printf "%s.o" programName :: Text
 
       writeFile asmFilename assembly
 
@@ -33,7 +40,7 @@ compile (CompileInput debug programName bf) =
     Left err ->
       die err
 
-getArchitectureCompiler :: Either String (Brainfuck -> String)
+getArchitectureCompiler :: Either String (Brainfuck -> Text)
 getArchitectureCompiler = case arch of
   "x86_64"    -> Right X86_64.compile
-  unsupported -> Left $ "Error: unsupported architecture " ++ unsupported
+  unsupported -> Left $ "Error: unsupported architecture " <> unsupported
