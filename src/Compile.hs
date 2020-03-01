@@ -6,12 +6,14 @@ module Compile (
 
 import           Prelude               hiding (readFile)
 
-import           Control.Applicative   ((<**>))
+import           Control.Applicative   (optional, (<**>))
+import           Data.Maybe            (fromMaybe)
 import           Data.Semigroup        ((<>))
 import           Data.Text.IO          (readFile)
 import           Options.Applicative   (Parser, action, argument, auto,
                                         completeWith, help, helper, long,
-                                        metavar, option, str, switch, value)
+                                        metavar, option, short, str, switch,
+                                        value)
 import           System.Exit           (die)
 import           System.FilePath.Posix (takeBaseName)
 import           System.Info           (os)
@@ -26,17 +28,18 @@ data CompileArgs = CompileArgs
   {
     debug         :: Bool,
     optimizations :: OptimizationLevel,
+    outfile       :: Maybe String,
     file          :: String
   }
   deriving (Show, Read)
 
 compile :: CompileArgs -> IO ()
-compile (CompileArgs debug optLevel filePath) = do
+compile (CompileArgs debug optLevel mOutfile filePath) = do
   instructions <- readFile filePath
   case runP pBrainfuck 0 filePath instructions of
     Left err    -> print err
     Right ops   -> do
-      let programName = takeBaseName filePath
+      let programName = fromMaybe (takeBaseName filePath) mOutfile
       let instructions = optimize optLevel ops
       let input = CompileInput debug programName instructions
 
@@ -55,6 +58,13 @@ compileArgsParser = CompileArgs
     metavar "LEVEL" <>
     help "all | none, default: all" <>
     completeWith ["all", "none"])
+  <*> optional (
+    option str (
+      long "outfile" <>
+      short 'o' <>
+      metavar "FILE"
+    )
+  )
   <*> argument str (
     metavar "FILE" <>
     help "brainfuck source code" <>
