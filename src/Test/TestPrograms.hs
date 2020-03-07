@@ -1,5 +1,8 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module TestPrograms (helloFromHell) where
 
+import           Data.Text   (Text)
 import           Text.Parsec (runP)
 
 import           Brainfuck   (Brainfuck)
@@ -10,6 +13,7 @@ helloFromHell = case runP pBrainfuck 0 "" helloFromHellRaw of
   Right bf -> bf
   Left err -> error $ show err
 
+helloFromHellRaw :: Text
 helloFromHellRaw = "\
   \[\
   \    This routine is a demonstration of checking for the three cell sizes\

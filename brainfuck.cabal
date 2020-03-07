@@ -80,7 +80,8 @@ Test-Suite TestSuite
                        mtl,
                        process,
                        containers,
-                       lens
+                       lens,
+                       text
   default-language:    Haskell2010
   ghc-options: -threaded -rtsopts -Wall
   other-modules:       Brainfuck

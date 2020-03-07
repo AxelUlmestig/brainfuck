@@ -57,9 +57,9 @@ interact = Interpreter.interact read write
 
 read :: State ProgramState Char
 read = do
-  (x:xs)  <- input <$> get
-  modify $ set programStateInputL xs
-  return x
+  x <- input <$> get
+  modify $ set programStateInputL (tail x)
+  return (head x)
 
 write :: Char -> State ProgramState ()
 write c = modify $ over programStateOutputL (c:)
