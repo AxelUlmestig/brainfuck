@@ -1,8 +1,9 @@
 module Main where
 
 import           Data.Semigroup      ((<>))
-import           Options.Applicative (Parser, command, execParser, fullDesc,
-                                      helper, info, progDesc, subparser)
+import           Options.Applicative (Parser, command, customExecParser,
+                                      fullDesc, helper, info, prefs, progDesc,
+                                      showHelpOnEmpty, subparser)
 
 import           Compile             (CompileArgs, compile, compileArgsParser)
 import           Run                 (RunArgs, run, runArgsParser)
@@ -11,9 +12,10 @@ data Command = Compile CompileArgs | Run RunArgs
   deriving (Show)
 
 main :: IO ()
-main = execute =<< execParser opts
+main = execute =<< customExecParser preferences opts
   where
     opts = info (helper <*> argsParser) fullDesc
+    preferences = prefs showHelpOnEmpty
 
 execute :: Command -> IO ()
 execute (Compile args) = compile args
