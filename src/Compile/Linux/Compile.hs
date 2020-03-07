@@ -7,7 +7,7 @@ module Compile.Linux.Compile (
 import           Prelude              hiding (writeFile)
 
 import           Data.Semigroup       ((<>))
-import           Data.Text            (Text, pack, unpack)
+import           Data.Text            (Text, pack)
 import           Data.Text.IO         (writeFile)
 import           System.Exit          (die)
 import           System.Info          (arch)

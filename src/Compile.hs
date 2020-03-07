@@ -1,4 +1,6 @@
-module Compile (
+ {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
+
+ module Compile (
   compile,
   CompileArgs,
   compileArgsParser
