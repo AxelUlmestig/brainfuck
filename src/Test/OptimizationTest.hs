@@ -8,8 +8,8 @@ import           Test.HUnit               (Test (TestCase, TestLabel, TestList),
                                            assertEqual)
 
 import           Brainfuck                (Brainfuck)
-import qualified Interpreter.Interact     as Interpreter
-import           Optimizations            (OptimizationLevel (All, None),
+import qualified Interpret.Interact       as Interpret
+import           Optimize                 (OptimizationLevel (All, None),
                                            optimize)
 import           TestPrograms             (helloFromHell)
 
@@ -53,7 +53,7 @@ run inputs bf =
     reverse (output result)
 
 interact :: Brainfuck -> State ProgramState ()
-interact = Interpreter.interact read write
+interact = Interpret.interact read write
 
 read :: State ProgramState Char
 read = do

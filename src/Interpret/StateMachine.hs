@@ -1,4 +1,4 @@
-module Interpreter.StateMachine (
+module Interpret.StateMachine (
   ExecutionState(..),
   interpret,
   supplyInput,

@@ -4,21 +4,21 @@ module Run (
   runArgsParser
 ) where
 
-import           Prelude              hiding (getContents, interact, readFile)
+import           Prelude             hiding (getContents, interact, readFile)
 
-import           Control.Applicative  ((<**>), (<|>))
-import           Data.Semigroup       ((<>))
-import           Data.Text.IO         (getContents, readFile)
-import           Options.Applicative  (Parser, action, argument, auto, command,
-                                       completeWith, help, helper, info, long,
-                                       metavar, option, progDesc, str,
-                                       subparser, value)
-import           Text.Parsec          (runP)
+import           Control.Applicative ((<**>), (<|>))
+import           Data.Semigroup      ((<>))
+import           Data.Text.IO        (getContents, readFile)
+import           Options.Applicative (Parser, action, argument, auto, command,
+                                      completeWith, help, helper, info, long,
+                                      metavar, option, progDesc, str, subparser,
+                                      value)
+import           Text.Parsec         (runP)
 
-import           Brainfuck            (Brainfuck)
-import qualified Interpreter.Interact as Interpreter
-import           Lexer                (pBrainfuck)
-import           Optimizations        (OptimizationLevel (All), optimize)
+import           Brainfuck           (Brainfuck)
+import qualified Interpret.Interact  as Interpret
+import           Lexer               (pBrainfuck)
+import           Optimize            (OptimizationLevel (All), optimize)
 
 data RunArgs = RunArgs
   {
@@ -73,5 +73,5 @@ run (RunArgs optLevel (File filePath)) = do
     Right ops -> interact $ optimize optLevel ops
 
 interact :: Brainfuck -> IO ()
-interact = Interpreter.interact getChar putChar
+interact = Interpret.interact getChar putChar
 

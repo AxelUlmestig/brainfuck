@@ -1,4 +1,4 @@
-module Optimizations.MergeSetAndInc (mergeSetAndInc) where
+module Optimize.MergeSetAndInc (mergeSetAndInc) where
 
 import           Brainfuck (Brainfuck, Operation (..))
 

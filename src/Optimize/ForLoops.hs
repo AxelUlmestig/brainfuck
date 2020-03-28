@@ -1,4 +1,4 @@
-module Optimizations.ForLoops (optimizeForLoops) where
+module Optimize.ForLoops (optimizeForLoops) where
 
 import           Control.Monad.State.Lazy (State, runState, state)
 import           Data.Map                 (Map, delete, empty, lookup,

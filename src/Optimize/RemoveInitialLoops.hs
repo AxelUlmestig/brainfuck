@@ -1,4 +1,4 @@
-module Optimizations.RemoveInitialLoops (removeInitialLoops) where
+module Optimize.RemoveInitialLoops (removeInitialLoops) where
 
 import           Brainfuck (Brainfuck, Operation (..))
 

@@ -1,4 +1,4 @@
-module Optimizations.RemoveEmptyLoops (removeEmptyLoops) where
+module Optimize.RemoveEmptyLoops (removeEmptyLoops) where
 
 import           Brainfuck (Brainfuck, Operation (..))
 

@@ -1,4 +1,4 @@
-module Optimizations.OptimizeCellResets (optimizeCellResets) where
+module Optimize.OptimizeCellResets (optimizeCellResets) where
 
 import           Brainfuck (Brainfuck, Operation (..))
 

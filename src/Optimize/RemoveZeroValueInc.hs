@@ -1,4 +1,4 @@
-module Optimizations.RemoveZeroValueInc (removeZeroValueInc) where
+module Optimize.RemoveZeroValueInc (removeZeroValueInc) where
 
 import           Brainfuck (Brainfuck, Operation (..))
 

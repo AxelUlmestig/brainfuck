@@ -1,4 +1,4 @@
-module Optimizations.SquishIncPointer (squishIncPointer) where
+module Optimize.SquishIncPointer (squishIncPointer) where
 
 import           Brainfuck (Brainfuck, Operation (..))
 

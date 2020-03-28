@@ -1,4 +1,4 @@
-module Optimizations.SquishSetValue (squishSetValue) where
+module Optimize.SquishSetValue (squishSetValue) where
 
 import           Brainfuck (Brainfuck, Operation (..))
 

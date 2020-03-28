@@ -1,4 +1,4 @@
-module Optimizations.PruneDeadLoops (pruneDeadLoops) where
+module Optimize.PruneDeadLoops (pruneDeadLoops) where
 
 import           Brainfuck (Brainfuck, Operation (..))
 
