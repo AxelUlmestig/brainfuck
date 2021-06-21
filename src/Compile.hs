@@ -23,8 +23,8 @@ import           Text.Parsec           (runP)
 
 import           Compile.CompileInput  (CompileInput (CompileInput))
 import qualified Compile.Linux.Compile as Linux
-import           Lexer                 (pBrainfuck)
 import           Optimize              (OptimizationLevel (All), optimize)
+import           Parser                (pBrainfuck)
 
 data CompileArgs = CompileArgs
   {

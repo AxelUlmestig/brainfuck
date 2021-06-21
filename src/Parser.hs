@@ -1,4 +1,4 @@
-module Lexer (pBrainfuck) where
+module Parser (pBrainfuck) where
 
 import           Data.Functor                  (($>))
 import           Data.Maybe                    (catMaybes)
@@ -7,7 +7,8 @@ import           Text.Parsec                   (Parsec, getState, modifyState)
 import           Text.ParserCombinators.Parsec (between, char, choice, many,
                                                 many1, noneOf)
 
-import           Brainfuck                     (Brainfuck, Operation (IncrementPointer, IncrementValue, Loop, OutputValue, ReadValue))
+import           Brainfuck                     (Brainfuck,
+                                                Operation (IncrementPointer, IncrementValue, Loop, OutputValue, ReadValue))
 
 pBrainfuck :: Parsec Text Int Brainfuck
 pBrainfuck = catMaybes <$> many (choice [

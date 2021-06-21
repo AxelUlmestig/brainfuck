@@ -17,8 +17,8 @@ import           Text.Parsec         (runP)
 
 import           Brainfuck           (Brainfuck)
 import qualified Interpret.Interact  as Interpret
-import           Lexer               (pBrainfuck)
 import           Optimize            (OptimizationLevel (All), optimize)
+import           Parser              (pBrainfuck)
 
 data RunArgs = RunArgs
   {

@@ -6,7 +6,7 @@ import           Data.Text   (Text)
 import           Text.Parsec (runP)
 
 import           Brainfuck   (Brainfuck)
-import           Lexer       (pBrainfuck)
+import           Parser      (pBrainfuck)
 
 helloFromHell :: Brainfuck
 helloFromHell = case runP pBrainfuck 0 "" helloFromHellRaw of

@@ -17,7 +17,7 @@ library
   hs-source-dirs:      src
                      , src/Compile
   exposed-modules:     Brainfuck
-                     , Lexer
+                     , Parser
                      , Interpret.Interact
                      , Interpret.StateMachine
                      , Compile
@@ -87,8 +87,7 @@ Test-Suite TestSuite
   other-modules:       Brainfuck
                        Interpret.Interact
                        Interpret.StateMachine
-                       Lexer
-                       ForLoopTest,
+                       ForLoopTest
                        Optimize
                        Optimize.ForLoops
                        Optimize.MergeSetAndInc
@@ -102,4 +101,5 @@ Test-Suite TestSuite
                        Optimize.SquishIncValue
                        Optimize.SquishSetValue
                        OptimizationTest
+                       Parser
                        TestPrograms
