@@ -94,7 +94,7 @@ run/compiled.
 
 ### Debugging
 
-If you want to debug the executables (and you're a masochist) you an compile
+If you want to debug the executables (and you're a masochist) you can compile
 with the `--debug` flag and then use `gdb` to step through the assembly code in
 the executable.
 
