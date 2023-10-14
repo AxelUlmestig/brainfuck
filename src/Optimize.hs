@@ -18,7 +18,7 @@ import           Optimize.SquishSetValue       (squishSetValue)
 data OptimizationLevel = All | None
   deriving (Show)
 
-{-# ANN module "HLint: ignore Use list comprehension" #-}
+{-# ANN module ("HLint: ignore Use list comprehension"::String) #-}
 instance Read OptimizationLevel where
   readsPrec _ str =
     let
